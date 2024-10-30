@@ -57,8 +57,14 @@ List orders = [
   "Rice 10kg x1",
   "Sugar 5kg x2",
   "Gas 9kg x1",
-
 ];
+Map stock = {
+  "food stuffs":20.0,
+  "Gas ":30.0,
+  "Cerials":30.0,
+  "Electronics":10.0,
+  "Others":10.0
+};
   return SingleChildScrollView(
     child: Column(
       children: [
@@ -175,9 +181,34 @@ List orders = [
         Card(
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              
+              child: Row(
+                children: [
+                  Expanded(
+                    child: PieChart(
+                      PieChartData(
+                        sections: List.generate(stock.length,
+                         (index){
+                          double value = stock[stock.keys.toList()[index]];
+                          return PieChartSectionData(
+                            value: value,
+                            color:  Color.fromARGB(255, 56,((value.ceil())*2)+50, 39),
+                          );
+                         }
+                         )
+                      )
+                    ),
+                  ),
+                  ListView.builder(
+                    itemCount: 1,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ;
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         )
