@@ -182,36 +182,127 @@ Map stock = {
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
             child: SizedBox(
+              //height: 300,
               width: MediaQuery.of(context).size.width,
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: PieChart(
-                      PieChartData(
-                        sections: List.generate(stock.length,
-                         (index){
-                          double value = stock[stock.keys.toList()[index]];
-                          return PieChartSectionData(
-                            value: value,
-                            color:  Color.fromARGB(255, 56,((value.ceil())*2)+50, 39),
-                          );
-                         }
-                         )
-                      )
-                    ),
-                  ),
-                  ListView.builder(
-                    itemCount: 1,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ;
-                    },
-                  ),
+                 const Text("Available Stock"),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width/2,
+                        height: 180,
+                        child: PieChart(
+                          PieChartData(
+                          sections:List.generate(stock.length, (index1){
+                            double value = stock[stock.keys.toList()[index1]];
+                            return PieChartSectionData(
+                              titleStyle: TextStyle(),
+                              value: value,
+                              title: stock.keys.toList()[index1],
+                              color:  Color.fromARGB((value.ceil()*3)+150, 56,((value.ceil())*2)+50, 39),
+                            );
+                          })
+                        )),
+                      ),
+                       Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 138, 137, 137),
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        height: 170,
+                        width: 5,
+                       ),
+                       Expanded(
+                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin:const EdgeInsets.only(left: 20,right: 20,),
+                              padding:const EdgeInsets.all(0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
+                              ),
+                              child:const Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                Text("Filter"),
+                                 Icon(Icons.keyboard_arrow_down_outlined),
+                              ],)
+                            ),
+                            const SizedBox(height: 5,),
+                            Container(
+                              alignment: Alignment.topLeft,
+                              height: 135,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: stock.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return 
+                                  Container(
+                                    margin:const EdgeInsets.only(left: 20,right: 20,),
+                                    padding:const EdgeInsets.all(0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                //border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                Text(stock.keys.toList()[index]),
+                                const Icon(Icons.add),
+                              ],)
+                            );
+                                },
+                              ),
+                            ),
+                          ],
+                         ),
+                       )
+                    ],
+                  )
                 ],
               ),
             ),
           ),
         )
+        // Card(
+        //   child: InkWell(
+        //     borderRadius: BorderRadius.circular(10),
+        //     child: SizedBox(
+        //       width: MediaQuery.of(context).size.width,
+        //       child: Row(
+        //         children: [
+        //           AspectRatio(
+        //             aspectRatio: 1,
+        //             child: PieChart(
+        //               PieChartData(
+        //                 sections: List.generate(stock.length,
+        //                  (index){
+        //                   double value = stock[stock.keys.toList()[index]];
+        //                   return PieChartSectionData(
+        //                     value: value,
+        //                     color:  Color.fromARGB(255, 56,((value.ceil())*2)+50, 39),
+        //                   );
+        //                  }
+        //                  )
+        //               )
+        //             ),
+        //           ),
+        //           // ListView.builder(
+        //           //   itemCount: 1,
+        //           //   shrinkWrap: true,
+        //           //   itemBuilder: (BuildContext context, int index) {
+        //           //     return ;
+        //           //   },
+        //           // ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // )
       ],
     ),
   );
