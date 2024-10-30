@@ -124,7 +124,7 @@ Map stock = {
                       ],
                     ),
                     index==0?
-                    Column(
+                   const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.check),
