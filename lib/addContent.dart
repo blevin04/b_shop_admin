@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:input_quantity/input_quantity.dart';
 class Addcontent extends StatelessWidget {
   const Addcontent({super.key});
 static PageController _pageController = PageController();
@@ -207,7 +207,47 @@ Widget restock(BuildContext context){
         SearchBar(
           leading: Icon(Icons.search),
           hintText: "Product to restock",
-        )
+        ),
+        ListView.builder(
+          itemCount: 5,
+          shrinkWrap: true,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child: ListTile(
+                onTap: (){
+                  showDialog(context: context, 
+                  builder: (context){
+                    return Dialog(
+                      child: SizedBox(
+                        height: 120,
+                        width: 200,
+                        child: Column(
+                          children: [
+                           const Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Product Name",style: TextStyle(fontWeight: FontWeight.bold),),
+                              ),
+                            ),
+                           const InputQty.int(
+                            initVal: 11,
+                           ),
+                            TextButton(onPressed: (){}, child:const Text("Done"))
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  );
+                },
+                leading: CircleAvatar(),
+                title: Text("Product Name"),
+                subtitle: Text("In Stock: 11"),
+
+              ),
+            );
+          },
+        ),
       ],
     ),
   );

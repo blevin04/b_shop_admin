@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   fl_chart: ^0.69.0
   url_launcher: ^6.3.1
+  input_quantity: ^2.4.1
 
 dev_dependencies:
   flutter_test:

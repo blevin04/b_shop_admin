@@ -146,34 +146,72 @@ Map stock = {
           ),
           itemCount: 2,
           itemBuilder: (BuildContext context, int index) {
+            bool done = false;
             return Card(
-              child:index==0? ListView.builder(
-                itemCount: orders.length,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    
-                    children: [
-                      Text(orders[index]),
-                      IconButton(onPressed: (){}, icon:const Icon(Icons.check_box_outline_blank)),
-
-                    ],
-                  );
-                },
+              child:index==0? 
+              Column(
+                children: [
+                 const Text("Open Orders",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                  ListView.builder(
+                    itemCount: orders.length,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return StatefulBuilder(
+                        builder: (context,stateorder) {
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: InkWell(
+                              onTap: (){
+                                stateorder((){
+                                  done = !done;
+                                });
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(orders[index]),
+                                  Icon(done?Icons.check_box: Icons.check_box_outline_blank)
+                              
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      );
+                    },
+                  ),
+                ],
               ):
-              ListView.builder(
-                padding:const EdgeInsets.all(0),
-                shrinkWrap: true,
-                itemCount: stats["Performance"].length,
-                itemBuilder: (BuildContext context, int index) {
-                  String pName= stats["Performance"].keys.toList()[index];
-                  var percentage = stats["Performance"][pName];
-                  return ListTile(
-                    title: Text(pName),
-                    trailing: Text("${percentage.toString()}%"),
-                  );
-                },
+              Column(
+                children: [
+                  const Text("Sales",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                  ListView.builder(
+                    padding:const EdgeInsets.all(0),
+                    shrinkWrap: true,
+                    itemCount: stats["Performance"].length,
+                    itemBuilder: (BuildContext context, int index) {
+                      String pName= stats["Performance"].keys.toList()[index];
+                      var percentage = stats["Performance"][pName];
+                      return Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ColoredBox( 
+                              color:Color.fromARGB(255, 16, 119, (percentage.floor()*2)+100), 
+                              child:const SizedBox(
+                                height: 20,
+                                width: 20,
+                              ), ),
+                            Text(pName),
+                            Text("${percentage.toString()}%"),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             );
           },
@@ -186,7 +224,7 @@ Map stock = {
               width: MediaQuery.of(context).size.width,
               child: Column(
                 children: [
-                 const Text("Available Stock"),
+                 const Text("Available Stock",style: TextStyle(fontWeight: FontWeight.bold),),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -198,7 +236,7 @@ Map stock = {
                           sections:List.generate(stock.length, (index1){
                             double value = stock[stock.keys.toList()[index1]];
                             return PieChartSectionData(
-                              titleStyle: TextStyle(),
+                              titleStyle:const TextStyle(fontWeight: FontWeight.bold),
                               value: value,
                               title: stock.keys.toList()[index1],
                               color:  Color.fromARGB((value.ceil()*3)+150, 56,((value.ceil())*2)+50, 39),
@@ -243,7 +281,7 @@ Map stock = {
                                   return 
                                   Container(
                                     margin:const EdgeInsets.only(left: 20,right: 20,),
-                                    padding:const EdgeInsets.all(0),
+                                    padding:const EdgeInsets.all(2),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(30),
                                 //border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
