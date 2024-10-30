@@ -1,3 +1,6 @@
+import 'package:b_shop_admin/addContent.dart';
+import 'package:b_shop_admin/main.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -6,10 +9,179 @@ class Homepage extends StatefulWidget {
   @override
   State<Homepage> createState() => _HomepageState();
 }
-
+bool darkmode = false;
+int curentPage = 0;
 class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title:const Text("B Shop Admin",),
+        actions: [
+          StatefulBuilder(
+            builder: (BuildContext context, setStatetheme) {
+              return IconButton(onPressed: (){
+                if (darkmode) {
+                  MyApp.of(context)!.changeTheme(ThemeMode.light);
+                }else{
+                  MyApp.of(context)!.changeTheme(ThemeMode.dark);
+                }
+                setStatetheme((){
+                  darkmode = !darkmode;
+                });
+              }, icon: Icon(darkmode?Icons.dark_mode:Icons.sunny));
+            },
+          ),
+        ],
+      ),
+      floatingActionButton: IconButton(onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const Addcontent()));
+      }, icon:const Icon(Icons.add,size: 35,)),
+      body: home(context)
+    );
   }
+}
+Widget home(BuildContext context){
+  Map stats = {
+    "Orders":78,
+    "Performance":{
+      "Gas 9kg":40.0,
+      "Gas 13kg":30.0,
+      "Cerials":20.0,
+      "others":10.0,
+      },
+  };
+List orders = [
+  "Gas 13kg x1",
+  "Unga 2kg x3",
+  "Rice 10kg x1",
+  "Sugar 5kg x2",
+  "Gas 9kg x1",
+
+];
+  return SingleChildScrollView(
+    child: Column(
+      children: [
+        GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+          ),
+          itemCount: 2,
+          itemBuilder: (BuildContext context, int index) {
+            String title_ = stats.keys.toList()[index];
+            Map items = stats[stats.keys.toList().last];
+            return Card(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                enableFeedback: false,
+                splashColor: Colors.transparent,
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Column(
+                      children: [
+                        Text(title_,style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                        Expanded(
+                          child:PieChart(
+                            swapAnimationCurve: Curves.bounceInOut,
+                            swapAnimationDuration:const Duration(milliseconds: 200),
+                            index == 0?
+                            PieChartData(
+                              titleSunbeamLayout: false,
+                              sections: [
+                                PieChartSectionData(
+                                  gradient:const LinearGradient(colors: [Colors.blue, Color.fromARGB(255, 53, 63, 93)]),
+                                  value: 80,
+                                  color:Colors.blue,
+                                  ),
+                                PieChartSectionData(value: 10,color: Colors.white),
+                              ]
+                            ):
+                            PieChartData(
+                              sections: List.generate(items.length, (int index){
+                                String ttle = items.keys.toList()[index];
+                                double value = items[ttle];
+                                return PieChartSectionData(
+                                  color:   Color.fromARGB(255, 16, 119, (value.floor()*2)+100),
+                                  titleStyle:const TextStyle(overflow: TextOverflow.ellipsis),
+                                  value: value,
+                                  //title: ttle
+                                );
+                              })
+                            )
+                          )
+                           ,
+                          ),
+                          
+                      ],
+                    ),
+                    index==0?
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check),
+                        Text("12/15",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                      ],
+                    ):
+                    const Column()
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+        GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+          ),
+          itemCount: 2,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child:index==0? ListView.builder(
+                itemCount: orders.length,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    
+                    children: [
+                      Text(orders[index]),
+                      IconButton(onPressed: (){}, icon:const Icon(Icons.check_box_outline_blank)),
+
+                    ],
+                  );
+                },
+              ):
+              ListView.builder(
+                padding:const EdgeInsets.all(0),
+                shrinkWrap: true,
+                itemCount: stats["Performance"].length,
+                itemBuilder: (BuildContext context, int index) {
+                  String pName= stats["Performance"].keys.toList()[index];
+                  var percentage = stats["Performance"][pName];
+                  return ListTile(
+                    title: Text(pName),
+                    trailing: Text("${percentage.toString()}%"),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        Card(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              
+            ),
+          ),
+        )
+      ],
+    ),
+  );
 }
