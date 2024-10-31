@@ -39,6 +39,7 @@ dependencies:
   url_launcher: ^6.3.1
   input_quantity: ^2.4.1
   firebase_core: ^3.6.0
+  hive: ^2.2.3
 
 dev_dependencies:
   flutter_test:
