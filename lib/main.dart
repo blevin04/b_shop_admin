@@ -2,9 +2,11 @@ import 'package:b_shop_admin/firebase_options.dart';
 import 'package:b_shop_admin/homepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
+  Hive.initFlutter();
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
 );
@@ -34,7 +36,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: _themeMode,
       darkTheme: ThemeData.dark(),
       theme: ThemeData(
-        // This is the theme of your application.
+        // This is the theme of your application. 
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
         // the application has a purple toolbar. Then, without quitting the app,
