@@ -147,71 +147,74 @@ Map stock = {
           itemCount: 2,
           itemBuilder: (BuildContext context, int index) {
             bool done = false;
-            return Card(
-              child:index==0? 
-              Column(
-                children: [
-                 const Text("Open Orders",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
-                  ListView.builder(
-                    itemCount: orders.length,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return StatefulBuilder(
-                        builder: (context,stateorder) {
-                          return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: InkWell(
-                              onTap: (){
-                                stateorder((){
-                                  done = !done;
-                                });
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text(orders[index]),
-                                  Icon(done?Icons.check_box: Icons.check_box_outline_blank)
-                              
-                                ],
+            return SingleChildScrollView(
+              child: Card(
+                child:index==0? 
+                Column(
+                  children: [
+                   const Text("Open Orders",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: orders.length,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        return StatefulBuilder(
+                          builder: (context,stateorder) {
+                            return Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: InkWell(
+                                onTap: (){
+                                  stateorder((){
+                                    done = !done;
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(orders[index]),
+                                    Icon(done?Icons.check_box: Icons.check_box_outline_blank)
+                                
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                      );
-                    },
-                  ),
-                ],
-              ):
-              Column(
-                children: [
-                  const Text("Sales",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-                  ListView.builder(
-                    padding:const EdgeInsets.all(0),
-                    shrinkWrap: true,
-                    itemCount: stats["Performance"].length,
-                    itemBuilder: (BuildContext context, int index) {
-                      String pName= stats["Performance"].keys.toList()[index];
-                      var percentage = stats["Performance"][pName];
-                      return Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            ColoredBox( 
-                              color:Color.fromARGB(255, 16, 119, (percentage.floor()*2)+100), 
-                              child:const SizedBox(
-                                height: 20,
-                                width: 20,
-                              ), ),
-                            Text(pName),
-                            Text("${percentage.toString()}%"),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                            );
+                          }
+                        );
+                      },
+                    ),
+                  ],
+                ):
+                Column(
+                  children: [
+                    const Text("Sales",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                    ListView.builder(
+                      padding:const EdgeInsets.all(0),
+                      shrinkWrap: true,
+                      itemCount: stats["Performance"].length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String pName= stats["Performance"].keys.toList()[index];
+                        var percentage = stats["Performance"][pName];
+                        return Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ColoredBox( 
+                                color:Color.fromARGB(255, 16, 119, (percentage.floor()*2)+100), 
+                                child:const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                ), ),
+                              Text(pName),
+                              Text("${percentage.toString()}%"),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
           },
