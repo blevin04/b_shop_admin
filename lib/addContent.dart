@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:b_shop_admin/backend_Functions.dart';
+import 'package:b_shop_admin/homepage.dart';
 import 'package:b_shop_admin/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:input_quantity/input_quantity.dart';
@@ -85,10 +86,22 @@ List<String> imagePath = [];
   ];
   bool newCategory = false;
   bool categorydrop=false;
-  int price =0;
-  int stock = 0;
+  double price =0;
+  double stock = 0;
 class _addState extends State<add> {
-
+  @override
+  void dispose() {
+    newCategoryController.dispose();
+    nameController.dispose();
+    super.dispose();
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    newCategoryController =TextEditingController();
+    nameController = TextEditingController();
+  }
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -120,7 +133,7 @@ class _addState extends State<add> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InputQty(
-            onQtyChanged: (value)=>price=value,
+            onQtyChanged: (value)=>price=value.ceilToDouble()
           )
         ),
         StatefulBuilder(
@@ -134,7 +147,7 @@ class _addState extends State<add> {
               ),
               child: InkWell(
                 onTap: ()async{
-                  imagePath = await getImage(context);
+                  imagePath += await getImage(context);
                   if (imagePath == "Error") {
                     showsnackbar(context, "Error occured");
                   }else{
@@ -153,7 +166,22 @@ class _addState extends State<add> {
                         ),
                         itemCount: imagePath.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return AspectRatio(aspectRatio: 1,child: Image.file(File(imagePath[index])),);
+                          return Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Center(
+                                child: Image.file(
+                                  fit: BoxFit.fill,
+                                  File(imagePath[index])),
+                                ),
+                                IconButton(onPressed: (){
+                                  imageState((){
+                                    imagePath.remove(imagePath[index]);
+                                  });
+                                }, 
+                                icon:const CircleAvatar(child:  Icon(Icons.delete))),
+                            ],
+                          );
                         },
                       ),
                       ),
@@ -260,7 +288,7 @@ class _addState extends State<add> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InputQty(
-            onQtyChanged: (value)=>stock = value,
+            onQtyChanged: (value)=>stock = value.ceilToDouble(),
           )
         ),
         const SizedBox(height: 20,),
@@ -269,12 +297,14 @@ class _addState extends State<add> {
           child: TextButton(onPressed: ()async{
             String state = await addItem(
               nameController.text, 
-              stock, 
+              stock.toInt(), 
               price.ceilToDouble(), 
               imagePath,
              currentCategory);
              if (state=="Success") {
                showsnackbar(context, "${nameController.text} added successfully");
+               Navigator.pop(context);
+               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Homepage()));
              }
           }, 
           child: Container(

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,4 +35,41 @@ return image;
 
 void addCategory(){
 
+}
+
+showcircleprogress(BuildContext context) {
+
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return   StatefulBuilder(
+    builder: (BuildContext context, setState) {
+      return  FutureBuilder(
+        future: Future.delayed(const Duration(seconds: 5)),
+       
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            height: 120,
+            width: 120,
+            color:const Color.fromARGB(84, 50, 50, 50),
+            child: const Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Color.fromARGB(131, 128, 124, 124),
+                color: Colors.lightBlueAccent,
+              ),
+            ),
+          ),
+        );
+          }
+          return Container();
+        },
+      );
+      
+          }
+        );
+       
+      });
 }
