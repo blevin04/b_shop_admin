@@ -58,9 +58,9 @@ static final  PageController _pageController = PageController();
       ),
       body:PageView(
         controller: _pageController,
-        children: [
-         const add(),
-          restock(context)
+        children:const [
+          add(),
+          restock()
         ],
       ) ,
     );
@@ -113,7 +113,7 @@ class _addState extends State<add> {
 
         ),
        const Padding(
-          padding: const EdgeInsets.only(left: 10.0),
+          padding: EdgeInsets.only(left: 10.0),
           child: Text("Name"),
         ),
         Padding(
@@ -160,6 +160,7 @@ class _addState extends State<add> {
                     Visibility(
                       visible: imagePath.isNotEmpty,
                       child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -318,56 +319,63 @@ class _addState extends State<add> {
   }
 }
 
+class restock extends StatefulWidget {
+  const restock({super.key});
 
-Widget restock(BuildContext context){
-  return SingleChildScrollView(
-    child: Column(
+  @override
+  State<restock> createState() => _restockState();
+}
+TextEditingController searchController = TextEditingController();
+class _restockState extends State<restock> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
       children: [
-       const SearchBar(
+        SearchBar(
           leading: Icon(Icons.search),
-          hintText: "Product to restock",
+          hintText: "Search your Product",
         ),
-        ListView.builder(
-          itemCount: 5,
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              child: ListTile(
-                onTap: (){
-                  showDialog(context: context, 
-                  builder: (context){
-                    return Dialog(
-                      child: SizedBox(
-                        height: 120,
-                        width: 200,
-                        child: Column(
-                          children: [
-                           const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text("Product Name",style: TextStyle(fontWeight: FontWeight.bold),),
-                              ),
-                            ),
-                           const InputQty.int(
-                            initVal: 11,
-                           ),
-                            TextButton(onPressed: (){}, child:const Text("Done"))
-                          ],
-                        ),
-                      ),
-                    );
+        FutureBuilder(
+          future: getStock(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center( child: CircularProgressIndicator(),);
+            }
+            if (snapshot.data.isEmpty) {
+              return const Center(child: Icon(Icons.error),);
+            }
+            return ListenableBuilder(
+              listenable:searchController,
+              builder: (context,child) {
+                Map<String,dynamic> filtered = {};
+                filtered.forEach((key,value){
+                  String texttt = "";
+                  if (value["Name"].toLowerCase().contains(searchController.text.toLowerCase())) {
+                    filtered.addAll({key:value});
                   }
-                  );
-                },
-                leading:const CircleAvatar(),
-                title:const Text("Product Name"),
-                subtitle:const Text("In Stock: 11"),
-
-              ),
+                }); 
+                return filtered.isEmpty?const Center(child: Text("No Match"),):
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: filtered.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    List keys = filtered.keys.toList();
+                    String pName = filtered[keys[index]]["Name"];
+                    int inStock = filtered[keys[index]]["Stock"];
+                    String category = filtered[keys[index]]["Category"];
+                    return ListTile(
+                      leading:const CircleAvatar(),
+                      title: Text(pName),
+                      subtitle: Text(category),
+                      trailing: Text("$inStock Available"),
+                    );
+                  },
+                );
+              }
             );
           },
         ),
       ],
-    ),
-  );
+    );
+  }
 }
