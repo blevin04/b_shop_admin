@@ -5,6 +5,7 @@ import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/homepage.dart';
 import 'package:b_shop_admin/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:input_quantity/input_quantity.dart';
 class Addcontent extends StatelessWidget {
   const Addcontent({super.key});
@@ -296,14 +297,20 @@ class _addState extends State<add> {
         const SizedBox(height: 20,),
         Center(
           child: TextButton(onPressed: ()async{
-            String state = await addItem(
+            String state ="";
+            while(state.isEmpty){
+              showcircleprogress(context);
+              state = await addItem(
               nameController.text, 
               stock.toInt(), 
               price.ceilToDouble(), 
               imagePath,
              currentCategory);
+            }
              if (state=="Success") {
                showsnackbar(context, "${nameController.text} added successfully");
+               imagePath.clear();
+               currentCategory ="Select Category";
                Navigator.pop(context);
                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Homepage()));
              }
@@ -326,14 +333,41 @@ class restock extends StatefulWidget {
   State<restock> createState() => _restockState();
 }
 TextEditingController searchController = TextEditingController();
+Map<String,dynamic> filtered = {};
+void openimageBox()async{
+   await Hive.openBox("Images");
+}
 class _restockState extends State<restock> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    openimageBox();
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SearchBar(
+          controller: searchController,
+
           leading: Icon(Icons.search),
           hintText: "Search your Product",
+          onChanged: (value){
+            List toRemove =[];
+            filtered.forEach((key,value1){
+              //String t1="";
+              if (!value1["Name"].toLowerCase().contains(value)) {
+                print("contains");
+                toRemove.add(key);
+              }
+            });
+            for(var remove in toRemove){
+              filtered.remove(remove);
+            }
+            setState(() {
+            });
+          },
         ),
         FutureBuilder(
           future: getStock(),
@@ -344,34 +378,102 @@ class _restockState extends State<restock> {
             if (snapshot.data.isEmpty) {
               return const Center(child: Icon(Icons.error),);
             }
-            return ListenableBuilder(
-              listenable:searchController,
-              builder: (context,child) {
-                Map<String,dynamic> filtered = {};
-                filtered.forEach((key,value){
-                  String texttt = "";
-                  if (value["Name"].toLowerCase().contains(searchController.text.toLowerCase())) {
-                    filtered.addAll({key:value});
-                  }
-                }); 
-                return filtered.isEmpty?const Center(child: Text("No Match"),):
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: filtered.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    List keys = filtered.keys.toList();
-                    String pName = filtered[keys[index]]["Name"];
-                    int inStock = filtered[keys[index]]["Stock"];
-                    String category = filtered[keys[index]]["Category"];
-                    return ListTile(
-                      leading:const CircleAvatar(),
-                      title: Text(pName),
-                      subtitle: Text(category),
-                      trailing: Text("$inStock Available"),
-                    );
-                  },
+            if (filtered.isEmpty && searchController.text.isEmpty) {
+              filtered = snapshot.data;
+            }
+            return filtered.isEmpty&&searchController.text.isNotEmpty?const Center(child: Text("No Match"),):
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: filtered.length,
+              itemBuilder: (BuildContext context, int index) {
+                List keys = filtered.keys.toList();
+                String pName = filtered[keys[index]]["Name"];
+                int inStock = filtered[keys[index]]["Stock"];
+                String category = filtered[keys[index]]["Category"];
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: ListTile(
+                    leading: FutureBuilder(
+                      future: getProductPictures(category, keys[index]),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if(snapshot.connectionState == ConnectionState.waiting){
+                          return const CircleAvatar();
+                        }
+                        return CircleAvatar(
+                          radius: 30,
+                          backgroundImage: MemoryImage(snapshot.data.first),
+                        );
+                      },
+                    ),
+                    title: Text(pName),
+                    subtitle: Text(category),
+                    trailing: Text("$inStock Available",style:const TextStyle(fontSize: 14),),
+
+                    onTap: (){
+                      showDialog(context: context, builder: (context){
+                        int newStock = stock.ceil();
+                        return Dialog(
+                          child: Container(
+                            height: 120,
+                            width: 150,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text("New Stock Number"),
+                                InputQty(
+                                  initVal: stock.ceil(),
+                                  onQtyChanged: (value){
+                                    newStock = value.toInt();
+                                  },
+                                ),
+                                TextButton(onPressed: ()async{
+                                  String state ="";
+                                  while(state.isEmpty){
+                                    showcircleprogress(context);
+                                    state = await reStock(keys[index],newStock);
+                                  }
+                                  Navigator.pop(context);
+                                  if (state=="Success") {
+                                    showsnackbar(context, "Restocked $pName");
+                                    Navigator.pop(context);
+                                  }else{
+                                    showsnackbar(context, "An error Occurred Please try again");
+                                  }
+                                }, child:const Text("Done"))
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                  ),
                 );
-              }
+                // return SizedBox(
+                //   height: 200,
+                //   width: 200,
+                //   child: Row(
+                //     children: [
+                //       FutureBuilder(
+                //       future: getProductPictures(category, keys[index]),
+                //       builder: (BuildContext context, AsyncSnapshot snapshot) {
+                //         if (snapshot.connectionState == ConnectionState.waiting) {
+                //           return const CircleAvatar();
+                //         }
+                //         return Image(
+                //           // height: 200,
+                //           // width: 200,
+                //           fit: BoxFit.contain,
+                //           image: MemoryImage(snapshot.data.first));
+                //       },
+                //     ),
+                //     
+                //      
+                //      
+                //     ],
+                //   ),
+                // );
+                
+              },
             );
           },
         ),

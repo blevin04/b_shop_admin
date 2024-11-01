@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:uuid/uuid.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -28,6 +29,7 @@ class itemModel{
     "Price":price,
     "Stock":stock,
     "Category": category,
+    "Clout":100,
   };
 }
 
@@ -43,10 +45,10 @@ Future<String> addItem(
     String uid = Uuid().v1();
     itemModel newItem = itemModel(name: name, price: price, uid: uid, stock: stock,category: category);
 
-    await firestore.collection("Products").doc(category).set(newItem.toJyson());
+    await firestore.collection("Products").doc(uid).set(newItem.toJyson());
     for(var path in imgPatch){
       String name = path.split("/").last;
-      await storage.child("/Products/$category/$uid/$name").putFile(File(path));
+      await storage.child("/Products/$uid/$name").putFile(File(path));
     }
     state = "Success";
   } catch (e) {
@@ -62,9 +64,7 @@ Future<String> reStock(
   String state = "Error Occured";
   try {
     state = "Success";
-    await firestore.collection("Products").where("Uid",isEqualTo: itemUid).get().then((onValue)async{
-      await firestore.collection("Products").doc(onValue.docs.single.id).update({"Stock":newStock});
-    });
+    await firestore.collection("Products").doc(itemUid).update({"Stock":newStock});
   } catch (e) {
     state = e.toString();
   }
@@ -83,12 +83,19 @@ Future<Map<String,dynamic>> getStock()async{
 
 Future<List<Uint8List>> getProductPictures(String category,String productId)async{
   List<Uint8List> pictures = [];
-
-  await storage.child("Products/$category/$productId").list().then((onValue)async{
+  
+ 
+  if (Hive.box("Images").containsKey(productId)) {
+    pictures = Hive.box("Images").get(productId);
+  }else{
+     await storage.child("Products/$productId").list().then((onValue)async{
     for(var img in onValue.items){
       var data = await img.getData();
       pictures.add(data!);
     }
   });
+  Hive.box("Images").put(productId, pictures);
+  }
+  print(pictures.length);
   return pictures;
 }
