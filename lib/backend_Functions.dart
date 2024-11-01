@@ -99,3 +99,30 @@ Future<List<Uint8List>> getProductPictures(String category,String productId)asyn
   print(pictures.length);
   return pictures;
 }
+Future<List<String>> getcategories()async{
+  List<String> categories0 =  ["test"];
+   await firestore.collection("Products").where("Category",whereNotIn: categories0).get().then((onValue)async{
+      //print(onValue.docs.length);
+      for(var val in onValue.docs){
+        //print(val.data()["Category"]);
+        final catName = val.data()["Category"];
+        categories0.add(catName);
+      }
+    });
+  
+  categories0.remove("test");
+  return categories0;
+}
+Future<Map<String,dynamic>> getFilteredStock(String category)async{
+  Map<String,dynamic> fStock ={};
+  try {
+   await firestore.collection("Products").where("Category",isEqualTo: category).get().then((onValue){
+      for(var value in onValue.docs){
+        fStock.addAll({value.id:value.data()});
+      }
+    });
+  } catch (e) {
+    
+  }
+  return fStock;
+}

@@ -419,7 +419,7 @@ class _restockState extends State<restock> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Text("New Stock Number"),
+                               const Text("New Stock Number"),
                                 InputQty(
                                   initVal: stock.ceil(),
                                   onQtyChanged: (value){

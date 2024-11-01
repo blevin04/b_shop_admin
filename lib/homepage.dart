@@ -1,7 +1,10 @@
 import 'package:b_shop_admin/addContent.dart';
+import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/main.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:input_quantity/input_quantity.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -11,7 +14,18 @@ class Homepage extends StatefulWidget {
 }
 bool darkmode = false;
 int curentPage = 0;
+void openBoxes()async{
+  await Hive.openBox("Orders");
+  await Hive.openBox("Categories");
+  // await Hive.openBox(name)
+}
 class _HomepageState extends State<Homepage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    openBoxes();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +79,7 @@ Map stock = {
   "Electronics":10.0,
   "Others":10.0
 };
+String focusedCategory = "";
   return SingleChildScrollView(
     child: Column(
       children: [
@@ -230,6 +245,7 @@ Map stock = {
                  const Text("Available Stock",style: TextStyle(fontWeight: FontWeight.bold),),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width/2,
@@ -256,50 +272,133 @@ Map stock = {
                         width: 5,
                        ),
                        Expanded(
-                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin:const EdgeInsets.only(left: 20,right: 20,),
-                              padding:const EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
-                              ),
-                              child:const Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                Text("Filter"),
-                                 Icon(Icons.keyboard_arrow_down_outlined),
-                              ],)
-                            ),
-                            const SizedBox(height: 5,),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              height: 135,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: stock.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return 
-                                  Container(
-                                    margin:const EdgeInsets.only(left: 20,right: 20,),
-                                    padding:const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                //border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                Text(stock.keys.toList()[index]),
-                                const Icon(Icons.add),
-                              ],)
-                            );
-                                },
-                              ),
-                            ),
-                          ],
+                         child: StatefulBuilder(
+                           builder: (context,categorystate) {
+                             return focusedCategory.isEmpty?
+                             Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                // Container(
+                                //   margin:const EdgeInsets.only(left: 20,right: 20,),
+                                //   padding:const EdgeInsets.all(0),
+                                //   decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(30),
+                                //     border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
+                                //   ),
+                                //   child:const Row(
+                                //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                //     children: [
+                                //     Text("Filter"),
+                                //      Icon(Icons.keyboard_arrow_down_outlined),
+                                //   ],)
+                                // ),
+                               const Center(child: Text("Categories",style: TextStyle(fontWeight: FontWeight.bold),),),
+                                const SizedBox(height: 5,),
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  height: 135,
+                                  child: FutureBuilder(
+                                    future: getcategories(),
+                                    builder: (context,categoriesSnapshot) {
+                                      if (categoriesSnapshot.connectionState == ConnectionState.waiting) {
+                                        return const Center(child: CircularProgressIndicator(),);
+                                      }
+                                      //print("dataa ${categoriesSnapshot.data}");
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: categoriesSnapshot.data!.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          return 
+                                          InkWell(
+                                            onTap: (){
+                                              categorystate((){
+                                                focusedCategory = categoriesSnapshot.data![index];
+                                              });
+                                            },
+                                            child: Container(
+                                              margin:const EdgeInsets.only(left: 20,right: 20,),
+                                              padding:const EdgeInsets.all(2),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(30),
+                                                    //border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                    Text(categoriesSnapshot.data![index]),
+                                                    const Icon(Icons.add),
+                                                  ],)
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }
+                                  ),
+                                ),
+                              ],
+                             ):Column(
+                              children: [
+                                Center(child: Row(children: [
+                                  IconButton(onPressed: (){
+                                    categorystate((){
+                                      focusedCategory = "";
+                                    });
+                                  }, icon:const Icon(Icons.arrow_back)),
+                                   Text(focusedCategory)
+                                ],),),
+                                FutureBuilder(
+                                  future: getFilteredStock(currentCategory),
+                                  builder: (BuildContext context, AsyncSnapshot filterdSnap) {
+                                    if (filterdSnap.connectionState == ConnectionState.waiting) {
+                                      return const Center(child: CircularProgressIndicator(),);
+                                    }
+                                    //Map nice ={};
+                                    List catKeys = filterdSnap.data.keys.toList();
+                                    //print(catKeys);
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: catKeys.length,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return Container(
+                                            margin:const EdgeInsets.only(left: 5,right: 5,),
+                                            padding:const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(30),
+                                        //border: Border.all(color: const Color.fromARGB(255, 112, 111, 111))
+                                      ),
+                                      child: Wrap(
+                                        children: [
+                                          Text(filterdSnap.data![catKeys[index]]["Name"],softWrap: true,),
+                                          const SizedBox(width: 10,),
+                                          InputQty(
+                                            initVal: filterdSnap.data![catKeys[index]]["Stock"],
+                                            onQtyChanged: (value){
+                                              reStock(catKeys[index], value.toInt());
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                      // child: Wrap(
+                                      //   clipBehavior: Clip.none,
+                                      //   verticalDirection: VerticalDirection.down,
+                                      //     children: [
+                                      //     
+                                      //      IconButton(onPressed: (){
+                                      //      }, icon:const Icon(Icons.remove_outlined)),
+                                      //      Text(filterdSnap.data![catKeys[index]]["Stock"].toString()),
+                                      //      IconButton(
+                                           
+                                      //       onPressed: (){}, icon: const Icon(Icons.add))
+                                      //   ],
+                                      // )
+                                      );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                             );
+                           }
                          ),
                        )
                     ],
