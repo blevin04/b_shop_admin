@@ -105,7 +105,8 @@ String focusedCategory = "";
                       children: [
                         Text(title_,style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
                         Expanded(
-                          child:PieChart(
+                          child:
+                          PieChart(
                             swapAnimationCurve: Curves.bounceInOut,
                             swapAnimationDuration:const Duration(milliseconds: 200),
                             index == 0?
@@ -344,7 +345,7 @@ String focusedCategory = "";
                                       focusedCategory = "";
                                     });
                                   }, icon:const Icon(Icons.arrow_back)),
-                                   Text(focusedCategory)
+                                   Text(focusedCategory,style:const TextStyle(fontWeight: FontWeight.bold),)
                                 ],),),
                                 FutureBuilder(
                                   future: getFilteredStock(currentCategory),
