@@ -76,7 +76,7 @@ class add extends StatefulWidget {
 }
   String currentCategory = "Select Category";
   TextEditingController nameController = TextEditingController();
-
+  TextEditingController description = TextEditingController();
 TextEditingController newCategoryController =TextEditingController();
 List<String> imagePath = [];
   List categories = [
@@ -294,6 +294,15 @@ class _addState extends State<add> {
           )
         ),
         const SizedBox(height: 20,),
+        TextField(
+          controller: description,
+          decoration: InputDecoration(
+            hintText: "More info on the product.....",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            )
+          ),
+        ),
         const SizedBox(height: 20,),
         Center(
           child: TextButton(onPressed: ()async{
@@ -305,7 +314,9 @@ class _addState extends State<add> {
               stock.toInt(), 
               price.ceilToDouble(), 
               imagePath,
-             currentCategory);
+             currentCategory,
+             description.text,
+             );
             }
              if (state=="Success") {
                showsnackbar(context, "${nameController.text} added successfully");
@@ -398,6 +409,10 @@ class _restockState extends State<restock> {
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if(snapshot.connectionState == ConnectionState.waiting){
                           return const CircleAvatar();
+                        }
+                        //print(snapshot.data);
+                        if (snapshot.data == null) {
+                          return const CircleAvatar(radius: 30,);
                         }
                         return CircleAvatar(
                           radius: 30,

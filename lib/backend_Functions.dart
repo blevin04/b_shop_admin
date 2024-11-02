@@ -15,12 +15,14 @@ class itemModel{
   final double price;
   final int stock;
   final String category;
+  final String description;
   itemModel({
     required this.name,
     required this.price,
     required this.uid,
     required this.stock,
     required this.category,
+    required this.description
   });
 
   Map<String,dynamic> toJyson()=>{
@@ -30,6 +32,7 @@ class itemModel{
     "Stock":stock,
     "Category": category,
     "Clout":100,
+    "Description":description,
   };
 }
 
@@ -39,11 +42,13 @@ Future<String> addItem(
   double price,
   List<String> imgPatch,
   String category,
+  String description,
 )async{
   String state = "Some Error Occured";
   try {
     String uid = Uuid().v1();
-    itemModel newItem = itemModel(name: name, price: price, uid: uid, stock: stock,category: category);
+    itemModel newItem = itemModel(
+      name: name, price: price, uid: uid, stock: stock,category: category,description: description);
 
     await firestore.collection("Products").doc(uid).set(newItem.toJyson());
     for(var path in imgPatch){
@@ -81,13 +86,14 @@ Future<Map<String,dynamic>> getStock()async{
   return stock;
 }
 
-Future<List<Uint8List>> getProductPictures(String category,String productId)async{
-  List<Uint8List> pictures = [];
-  
- 
+Future<List<dynamic>> getProductPictures(String category,String productId)async{
+  List<dynamic> pictures = [];
   if (Hive.box("Images").containsKey(productId)) {
+   // print("oooooooooooooooooo");
+    //print(Hive.box("Images").get(productId).runtimeType);
     pictures = Hive.box("Images").get(productId);
   }else{
+   // print("ppppppppppppppp");
      await storage.child("Products/$productId").list().then((onValue)async{
     for(var img in onValue.items){
       var data = await img.getData();

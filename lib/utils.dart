@@ -24,7 +24,6 @@ if (result != null) {
   result.files.forEach((value){
     image.add(value.path!);
   });
-  
  // setState(() {});
 }
 if (result == null) {

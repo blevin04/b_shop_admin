@@ -19,6 +19,15 @@ void openBoxes()async{
   await Hive.openBox("Categories");
   // await Hive.openBox(name)
 }
+void themechange(BuildContext context) async {
+  await Hive.box("theme").clear();
+  if (darkmode) {
+    await Hive.box("theme").put("theme", 1);
+  } else {
+    await Hive.box("theme").put("theme", 0);
+  }
+  //print("lllllllllllllllll");
+}
 class _HomepageState extends State<Homepage> {
   @override
   void initState() {
@@ -35,6 +44,7 @@ class _HomepageState extends State<Homepage> {
           StatefulBuilder(
             builder: (BuildContext context, setStatetheme) {
               return IconButton(onPressed: (){
+                themechange(context);
                 if (darkmode) {
                   MyApp.of(context)!.changeTheme(ThemeMode.light);
                 }else{
