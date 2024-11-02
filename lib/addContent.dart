@@ -362,7 +362,7 @@ class _restockState extends State<restock> {
         SearchBar(
           controller: searchController,
 
-          leading: Icon(Icons.search),
+          leading:const Icon(Icons.search),
           hintText: "Search your Product",
           onChanged: (value){
             List toRemove =[];
