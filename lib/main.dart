@@ -6,7 +6,7 @@ import 'package:hive_flutter/adapters.dart';
 
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
-  Hive.initFlutter();
+ await Hive.initFlutter();
   await Hive.openBox("theme");
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   ThemeMode _themeMode = Hive.box("theme").isEmpty
       ? ThemeMode.light
-      : Hive.box("theme").get("theme") == 0
+      : Hive.box("theme").get("theme") == 1
           ? ThemeMode.dark
           : ThemeMode.light;
   @override

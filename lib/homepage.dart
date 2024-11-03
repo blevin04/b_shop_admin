@@ -26,7 +26,8 @@ void themechange(BuildContext context) async {
   } else {
     await Hive.box("theme").put("theme", 0);
   }
-  //print("lllllllllllllllll");
+  print("lllllllllllllllll");
+  print(Hive.box("theme").values);
 }
 class _HomepageState extends State<Homepage> {
   @override
