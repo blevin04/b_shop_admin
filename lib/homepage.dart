@@ -17,6 +17,7 @@ int curentPage = 0;
 void openBoxes()async{
   await Hive.openBox("Orders");
   await Hive.openBox("Categories");
+  await Hive.openBox("Stock");
   // await Hive.openBox(name)
 }
 void themechange(BuildContext context) async {
@@ -26,8 +27,8 @@ void themechange(BuildContext context) async {
   } else {
     await Hive.box("theme").put("theme", 0);
   }
-  print("lllllllllllllllll");
-  print(Hive.box("theme").values);
+  // print("lllllllllllllllll");
+  // print(Hive.box("theme").values);
 }
 class _HomepageState extends State<Homepage> {
   @override
