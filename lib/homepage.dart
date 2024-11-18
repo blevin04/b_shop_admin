@@ -12,7 +12,8 @@ class Homepage extends StatefulWidget {
   @override
   State<Homepage> createState() => _HomepageState();
 }
-bool darkmode = false;
+bool darkmode = Hive.box("theme").isEmpty?false:
+  Hive.box("theme").get("theme")==1?true:false;
 int curentPage = 0;
 void openBoxes()async{
   await Hive.openBox("Orders");
