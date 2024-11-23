@@ -37,7 +37,6 @@ void addCategory(){
 }
 
 showcircleprogress(BuildContext context) {
-
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -71,4 +70,28 @@ showcircleprogress(BuildContext context) {
         );
        
       });
+}
+
+Future<String> getsingleImage(BuildContext context)async{
+    String image = "";
+  Permission.accessMediaLocation
+    .onDeniedCallback(() async {
+  Permission.accessMediaLocation.request();
+  if (await Permission.accessMediaLocation.isDenied) {
+    showsnackbar(context, "Permission denied");
+  }
+  if (await Permission.accessMediaLocation.isGranted) {
+    showsnackbar(context, 'Granted');
+  }
+});
+FilePickerResult? result = (await FilePicker.platform
+    .pickFiles(type: FileType.image,allowMultiple: false));
+if (result != null) {
+  image = result.files.single.path!;
+ // setState(() {});
+}
+if (result == null) {
+  showsnackbar(context, 'no image chossen');
+}
+return image;
 }

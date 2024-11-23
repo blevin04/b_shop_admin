@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:b_shop_admin/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -125,7 +126,20 @@ Future<Map<String,dynamic>> getFilteredStock(String category)async{
       }
     });
   } catch (e) {
-    
   }
   return fStock;
+}
+Future<String>sendMessage(String messageHead,String messageBody,String assets)async{
+  String state = "";
+  try {
+    String messageId = Uuid().v1();
+    String assetname = assets.split("/").last;
+    messageModel message = messageModel(body: messageBody, title: messageHead);
+    await firestore.collection("message").doc(messageId).set(message.toJyson());
+    await storage.child("/messages/$messageId/$assetname").putFile(File(assets));
+  } catch (e) {
+    throw e.toString();
+  }
+
+  return state;
 }
