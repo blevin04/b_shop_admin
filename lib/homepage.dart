@@ -1,6 +1,7 @@
 import 'package:b_shop_admin/addContent.dart';
 import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -14,6 +15,7 @@ class Homepage extends StatefulWidget {
 }
 bool darkmode = Hive.box("theme").isEmpty?false:
   Hive.box("theme").get("theme")==1?true:false;
+final firestore0 = FirebaseFirestore.instance;
 int curentPage = 0;
 void openBoxes()async{
   await Hive.openBox("Orders");
@@ -107,62 +109,84 @@ String focusedCategory = "";
             String title_ = stats.keys.toList()[index];
             Map items = stats[stats.keys.toList().last];
             return Card(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(10),
-                enableFeedback: false,
-                splashColor: Colors.transparent,
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Column(
+              child: StreamBuilder(
+                stream:firestore.collection("orders").snapshots() ,
+                builder: (context, snapshot) {
+                  QuerySnapshot<Map<String,dynamic>> orders = snapshot.data!;
+                  var ordersData = orders.docs;
+                  List openOrders = [];
+                  List todaysOrders = [];
+                  // DateTime tt = DateTime(200);
+                  // tt.isAfter(other)
+                  for(var data in ordersData){
+                    if (data.data()!["time"].toDate().isAfter(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day))) {
+                      todaysOrders.add(data.data());
+                    }
+                    if (data.data()["delivered"] != true) {
+                      openOrders.add(data.data());
+                    }
+                  }
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    enableFeedback: false,
+                    splashColor: Colors.transparent,
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
                       children: [
-                        Text(title_,style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-                        Expanded(
-                          child:
-                          PieChart(
-                            swapAnimationCurve: Curves.bounceInOut,
-                            swapAnimationDuration:const Duration(milliseconds: 200),
-                            index == 0?
-                            PieChartData(
-                              titleSunbeamLayout: false,
-                              sections: [
-                                PieChartSectionData(
-                                  gradient:const LinearGradient(colors: [Colors.blue, Color.fromARGB(255, 53, 63, 93)]),
-                                  value: 80,
-                                  color:Colors.blue,
-                                  ),
-                                PieChartSectionData(value: 10,color: Colors.white),
-                              ]
-                            ):
-                            PieChartData(
-                              sections: List.generate(items.length, (int index){
-                                String ttle = items.keys.toList()[index];
-                                double value = items[ttle];
-                                return PieChartSectionData(
-                                  color:   Color.fromARGB(255, 16, 119, (value.floor()*2)+100),
-                                  titleStyle:const TextStyle(overflow: TextOverflow.ellipsis),
-                                  value: value,
-                                  //title: ttle
-                                );
-                              })
-                            )
-                          )
-                           ,
-                          ),
-                          
+                        Column(
+                          children: [
+                            Text(title_,style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                            Expanded(
+                              child:
+                              PieChart(
+                                swapAnimationCurve: Curves.bounceInOut,
+                                swapAnimationDuration:const Duration(milliseconds: 200),
+                                index == 0?
+                                PieChartData(
+                                  titleSunbeamLayout: false,
+                                  sections: [
+                                    PieChartSectionData(
+                                      gradient:const LinearGradient(colors: [Colors.blue, Color.fromARGB(255, 53, 63, 93)]),
+                                      value: openOrders.length/todaysOrders.length,
+                                      color:Colors.blue,
+                                      ),
+                                    PieChartSectionData(value:(openOrders.length-todaysOrders.length)/todaysOrders.length,color: Colors.white),
+                                  ]
+                                ):
+                                PieChartData(
+                                  sections: List.generate(items.length, (int index){
+                                    String ttle = items.keys.toList()[index];
+                                    double value = items[ttle];
+                                    return PieChartSectionData(
+                                      color:   Color.fromARGB(255, 16, 119, (value.floor()*2)+100),
+                                      titleStyle:const TextStyle(overflow: TextOverflow.ellipsis),
+                                      value: value,
+                                      //title: ttle
+                                    );
+                                  })
+                                )
+                              )
+                               ,
+                              ),
+                              
+                          ],
+                        ),
+                        index==0?
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.check),
+                            todaysOrders.isNotEmpty?
+                            Text("${openOrders.length}/${todaysOrders.length}",style:const TextStyle(fontWeight: FontWeight.bold,fontSize: 20),):
+                            Container(),
+
+                          ],
+                        ):
+                        Container()
                       ],
                     ),
-                    index==0?
-                   const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.check),
-                        Text("12/15",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                      ],
-                    ):
-                    const Column()
-                  ],
-                ),
+                  );
+                }
               ),
             );
           },
