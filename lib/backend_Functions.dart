@@ -140,6 +140,16 @@ Future<String>sendMessage(String messageHead,String messageBody,String assets)as
   } catch (e) {
     throw e.toString();
   }
-
   return state;
+}
+Future<Map<String,dynamic>> getOrders()async{
+  Map<String,dynamic> orders = {};
+
+  await firestore.collection("orders").where("delivered",isEqualTo: false).get().then((onValue){
+    for(var value in onValue.docs){
+      orders.addAll({value.id:value.data()});
+    }
+  });
+  return orders;
+
 }

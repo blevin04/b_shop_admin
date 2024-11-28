@@ -99,6 +99,7 @@ String focusedCategory = "";
     child: Column(
       children: [
         GridView.builder(
+          scrollDirection: Axis.vertical,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -112,6 +113,9 @@ String focusedCategory = "";
               child: StreamBuilder(
                 stream:firestore.collection("orders").snapshots() ,
                 builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting){
+                    return const Center(child: CircularProgressIndicator(),);
+                  }
                   QuerySnapshot<Map<String,dynamic>> orders = snapshot.data!;
                   var ordersData = orders.docs;
                   List openOrders = [];
@@ -126,6 +130,8 @@ String focusedCategory = "";
                       openOrders.add(data.data());
                     }
                   }
+                  print(todaysOrders.length);
+                  print(openOrders.length);
                   return InkWell(
                     borderRadius: BorderRadius.circular(10),
                     enableFeedback: false,
@@ -147,10 +153,13 @@ String focusedCategory = "";
                                   sections: [
                                     PieChartSectionData(
                                       gradient:const LinearGradient(colors: [Colors.blue, Color.fromARGB(255, 53, 63, 93)]),
-                                      value: openOrders.length/todaysOrders.length,
+                                      value: (openOrders.length-todaysOrders.length)/todaysOrders.length,
                                       color:Colors.blue,
                                       ),
-                                    PieChartSectionData(value:(openOrders.length-todaysOrders.length)/todaysOrders.length,color: Colors.white),
+                                    PieChartSectionData(
+                                      value:openOrders.length/todaysOrders.length,
+                                      color: Colors.white
+                                    ),
                                   ]
                                 ):
                                 PieChartData(
@@ -177,9 +186,8 @@ String focusedCategory = "";
                           children: [
                             const Icon(Icons.check),
                             todaysOrders.isNotEmpty?
-                            Text("${openOrders.length}/${todaysOrders.length}",style:const TextStyle(fontWeight: FontWeight.bold,fontSize: 20),):
+                            Text("${(todaysOrders.length)- openOrders.length}/${todaysOrders.length}",style:const TextStyle(fontWeight: FontWeight.bold,fontSize: 20),):
                             Container(),
-
                           ],
                         ):
                         Container()
@@ -191,87 +199,90 @@ String focusedCategory = "";
             );
           },
         ),
-        GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-          ),
-          itemCount: 2,
-          itemBuilder: (BuildContext context, int index) {
-            bool done = false;
-            return SingleChildScrollView(
-              child: Card(
-                child:index==0? 
-                Column(
-                  children: [
-                   const Text("Open Orders",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: orders.length,
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        return StatefulBuilder(
-                          builder: (context,stateorder) {
-                            return Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: InkWell(
-                                onTap: (){
-                                  stateorder((){
-                                    done = !done;
-                                  });
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(orders[index]),
-                                    Icon(done?Icons.check_box: Icons.check_box_outline_blank)
-                                
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-                        );
-                      },
-                    ),
-                  ],
-                ):
-                Column(
-                  children: [
-                    const Text("Sales",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-                    ListView.builder(
-                      padding:const EdgeInsets.all(0),
-                      shrinkWrap: true,
-                      itemCount: stats["Performance"].length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String pName= stats["Performance"].keys.toList()[index];
-                        var percentage = stats["Performance"][pName];
-                        return Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              ColoredBox( 
-                                color:Color.fromARGB(255, 16, 119, (percentage.floor()*2)+100), 
-                                child:const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                ), ),
-                              Text(pName),
-                              Text("${percentage.toString()}%"),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+        Card(
+          child: Container(),
         ),
+        // GridView.builder(
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   shrinkWrap: true,
+        //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        //     crossAxisCount: 2,
+        //   ),
+        //   itemCount: 2,
+        //   itemBuilder: (BuildContext context, int index) {
+        //     bool done = false;
+        //     return SingleChildScrollView(
+        //       child: Card(
+        //         child:index==0? 
+        //         Column(
+        //           children: [
+        //            const Text("Open Orders",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+        //             ListView.builder(
+        //               physics: const NeverScrollableScrollPhysics(),
+        //               itemCount: orders.length,
+        //               shrinkWrap: true,
+        //               itemBuilder: (BuildContext context, int index) {
+        //                 return StatefulBuilder(
+        //                   builder: (context,stateorder) {
+        //                     return Padding(
+        //                       padding: const EdgeInsets.all(5.0),
+        //                       child: InkWell(
+        //                         onTap: (){
+        //                           stateorder((){
+        //                             done = !done;
+        //                           });
+        //                         },
+        //                         child: Row(
+        //                           mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //                           children: [
+        //                             Text(orders[index]),
+        //                             Icon(done?Icons.check_box: Icons.check_box_outline_blank)
+                                
+        //                           ],
+        //                         ),
+        //                       ),
+        //                     );
+        //                   }
+        //                 );
+        //               },
+        //             ),
+        //           ],
+        //         ):
+        //         Column(
+        //           children: [
+        //             const Text("Sales",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+        //             ListView.builder(
+        //               padding:const EdgeInsets.all(0),
+        //               shrinkWrap: true,
+        //               itemCount: stats["Performance"].length,
+        //               itemBuilder: (BuildContext context, int index) {
+        //                 String pName= stats["Performance"].keys.toList()[index];
+        //                 var percentage = stats["Performance"][pName];
+        //                 return Padding(
+        //                   padding: const EdgeInsets.all(5.0),
+        //                   child: Row(
+        //                     crossAxisAlignment: CrossAxisAlignment.center,
+        //                     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //                     children: [
+        //                       ColoredBox( 
+        //                         color:Color.fromARGB(255, 16, 119, (percentage.floor()*2)+100), 
+        //                         child:const SizedBox(
+        //                           height: 20,
+        //                           width: 20,
+        //                         ), ),
+        //                       Text(pName),
+        //                       Text("${percentage.toString()}%"),
+        //                     ],
+        //                   ),
+        //                 );
+        //               },
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // ),
         Card(
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
