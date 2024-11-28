@@ -4,8 +4,8 @@ import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/utils.dart';
 import 'package:flutter/material.dart';
 
-class name extends StatelessWidget {
-  const name({super.key});
+class Notify extends StatelessWidget {
+  const Notify({super.key});
 static TextEditingController titlecontroller = TextEditingController();
 static TextEditingController bodycontroller = TextEditingController();
   @override
@@ -17,6 +17,7 @@ static TextEditingController bodycontroller = TextEditingController();
         child: Column(
           children: [
             const Text("Create a notification for your customers"),
+            const SizedBox(height: 20,),
             TextField(
               controller: titlecontroller,
               decoration: InputDecoration(
@@ -43,7 +44,10 @@ static TextEditingController bodycontroller = TextEditingController();
             StatefulBuilder(
               builder: (BuildContext context, setState) {
                 return Container(
+                  padding:const EdgeInsets.all(10),
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(20),
                     image:assetPath.isNotEmpty?DecorationImage(image:FileImage(File(assetPath))):null
                   ),
@@ -53,6 +57,7 @@ static TextEditingController bodycontroller = TextEditingController();
                       setState((){});
                     },
                     child:const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.image),
                         Text("Attatch an image")
@@ -62,17 +67,27 @@ static TextEditingController bodycontroller = TextEditingController();
                 );
               },
             ),
-            Row(
+            const SizedBox(height: 20,),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
               Tooltip(
+                
                 triggerMode: TooltipTriggerMode.tap,
                 message: "A notification will be sent to this phone to see how it will look like once published",
-                child: TextButton(onPressed: (){}, child: Container(
+                child: TextButton(onPressed: ()async{
+                  if (titlecontroller.text.isNotEmpty && bodycontroller.text.isNotEmpty) {
+                    await showNotification(titlecontroller.text, bodycontroller.text, assetPath);
+                  }
+                }, 
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width/2,
                   padding:const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.blue),
-                    child:const Text("Test"),
+                    child:const Text("Preview",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),),
                 )),
               ),
               Tooltip(
@@ -83,8 +98,8 @@ static TextEditingController bodycontroller = TextEditingController();
                     return Dialog(
                       child: Column(
                         children: [
-                          Icon(Icons.emergency_rounded),
-                          Text("Confirm?"),
+                          const Icon(Icons.emergency_rounded),
+                          const Text("Confirm?"),
                           Row(children: [
                             TextButton(onPressed: ()async{
                               String state = "";
@@ -110,11 +125,13 @@ static TextEditingController bodycontroller = TextEditingController();
                     );
                   });
                 }, child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width/1.5,
                   padding:const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.green),
-                    child:const Text("Publish"),
+                    child:const Text("Publish",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.white),),
                 )),
               )
             ],)

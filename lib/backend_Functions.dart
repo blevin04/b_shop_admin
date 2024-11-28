@@ -153,3 +153,19 @@ Future<Map<String,dynamic>> getOrders()async{
   return orders;
 
 }
+Future<Map<String,dynamic>> getUserInfo(String userId)async{
+  Map<String,dynamic> info ={};
+
+  await firestore.collection("Users").doc(userId).get().then((onValue){
+    final name = onValue.data()!["Name"];
+    info.addAll({"name":name});
+    if (onValue.data()!.containsKey("number")) {
+      final number = onValue.data()!["number"];
+      info.addAll({"number":number});
+    }else{
+      final email = onValue.data()!["Email"];
+      info.addAll({"Email":email});
+    }
+  });
+  return info;
+}

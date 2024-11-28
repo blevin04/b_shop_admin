@@ -1,5 +1,7 @@
+import 'package:b_shop_admin/main.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -106,4 +108,26 @@ try {
     } catch (error) {
       showsnackbar(context, error.toString());
     }
+}
+
+Future<void> showNotification(String title,String body,String imagePath)async{
+   AndroidNotificationDetails messageTopreview = 
+  AndroidNotificationDetails(
+    "channelId", 
+    "channelName",
+    importance: Importance.high,
+    priority: Priority.high,
+    styleInformation:imagePath.isNotEmpty? BigPictureStyleInformation(
+      FilePathAndroidBitmap(imagePath)
+    ):null,
+    );
+     NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: messageTopreview);
+
+      await flutterLocalNotificationsPlugin.show(
+        0, 
+        title,
+         body, 
+         platformChannelSpecifics
+         );
 }
