@@ -111,7 +111,14 @@ try {
 }
 
 Future<void> showNotification(String title,String body,String imagePath)async{
-   AndroidNotificationDetails messageTopreview = 
+  try{
+
+    await flutterLocalNotificationsPlugin
+    .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+    ?.requestNotificationsPermission();
+
+
+    AndroidNotificationDetails messageTopreview = 
   AndroidNotificationDetails(
     "channelId", 
     "channelName",
@@ -123,11 +130,16 @@ Future<void> showNotification(String title,String body,String imagePath)async{
     );
      NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: messageTopreview);
-
+  print("daaaaaa");
       await flutterLocalNotificationsPlugin.show(
         0, 
         title,
          body, 
          platformChannelSpecifics
          );
+         print("nice");
+  }catch(e){
+    print(e.toString());
+  }
+   
 }

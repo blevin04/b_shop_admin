@@ -51,18 +51,24 @@ static TextEditingController bodycontroller = TextEditingController();
                     borderRadius: BorderRadius.circular(20),
                     image:assetPath.isNotEmpty?DecorationImage(image:FileImage(File(assetPath))):null
                   ),
-                  child: InkWell(
-                    onTap: ()async{
-                      assetPath = await getsingleImage(context);
-                      setState((){});
-                    },
-                    child:const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image),
-                        Text("Attatch an image")
-                      ],
-                    ),
+                  child: Stack(
+                    children: [
+                       assetPath.isNotEmpty? Image(image: FileImage(File(assetPath))):Container(),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: ()async{
+                          assetPath = await getsingleImage(context);
+                          setState((){});
+                        },
+                        child:const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.image),
+                            Text("Attatch an image")
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -77,6 +83,7 @@ static TextEditingController bodycontroller = TextEditingController();
                 message: "A notification will be sent to this phone to see how it will look like once published",
                 child: TextButton(onPressed: ()async{
                   if (titlecontroller.text.isNotEmpty && bodycontroller.text.isNotEmpty) {
+                    print("Deams");
                     await showNotification(titlecontroller.text, bodycontroller.text, assetPath);
                   }
                 }, 

@@ -1,14 +1,11 @@
 import 'package:b_shop_admin/addContent.dart';
-import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/main.dart';
 import 'package:b_shop_admin/notify.dart';
 import 'package:b_shop_admin/ordersPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:input_quantity/input_quantity.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
