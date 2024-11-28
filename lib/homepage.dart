@@ -67,7 +67,7 @@ class _HomepageState extends State<Homepage> {
       floatingActionButton: IconButton(onPressed: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const Addcontent()));
       }, icon:const Icon(Icons.add,size: 35,)),
-      body: Orderspage(),
+      body:const Orderspage(),
       bottomNavigationBar: Row(
         children: [
           IconButton(onPressed: (){}, icon:const Icon(Icons.travel_explore)),
@@ -87,13 +87,6 @@ Widget home(BuildContext context){
       "others":10.0,
       },
   };
-List orders = [
-  "Gas 13kg x1",
-  "Unga 2kg x3",
-  "Rice 10kg x1",
-  "Sugar 5kg x2",
-  "Gas 9kg x1",
-];
 Map stock = {
   "food stuffs":20.0,
   "Gas ":30.0,
@@ -130,7 +123,7 @@ String focusedCategory = "";
                   // DateTime tt = DateTime(200);
                   // tt.isAfter(other)
                   for(var data in ordersData){
-                    if (data.data()!["time"].toDate().isAfter(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day))) {
+                    if (data.data()["time"].toDate().isAfter(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day))) {
                       todaysOrders.add(data.data());
                     }
                     if (data.data()["delivered"] != true) {
