@@ -1,6 +1,7 @@
 import 'package:b_shop_admin/addContent.dart';
 import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/main.dart';
+import 'package:b_shop_admin/ordersPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,13 @@ class _HomepageState extends State<Homepage> {
       floatingActionButton: IconButton(onPressed: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const Addcontent()));
       }, icon:const Icon(Icons.add,size: 35,)),
-      body: home(context)
+      body: Orderspage(),
+      bottomNavigationBar: Row(
+        children: [
+          IconButton(onPressed: (){}, icon:const Icon(Icons.travel_explore)),
+          IconButton(onPressed: (){}, icon: const Icon(Icons.add)),
+          IconButton(onPressed: (){}, icon: const Icon(Icons.notification_add))
+        ],),
     );
   }
 }

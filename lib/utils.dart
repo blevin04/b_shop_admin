@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 showsnackbar(BuildContext context, String content) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(content)));
@@ -94,4 +95,15 @@ if (result == null) {
   showsnackbar(context, 'no image chossen');
 }
 return image;
+}
+
+Future<void> openMap(double latitude, double longitude,BuildContext context) async {
+try {
+      const String markerLabel = 'Here';
+      final url = Uri.parse(
+          'geo:$latitude,$longitude?q=$latitude,$longitude($markerLabel)');
+      await launchUrl(url);
+    } catch (error) {
+      showsnackbar(context, error.toString());
+    }
 }
