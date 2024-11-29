@@ -174,3 +174,7 @@ Future<Map<String,dynamic>> getUserInfo(String userId)async{
   });
   return info;
 }
+Future<void>delivered(String orderNum)async{
+  await firestore.collection("orders").doc(orderNum).update({"delivered":true,});
+
+}

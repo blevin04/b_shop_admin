@@ -12,7 +12,7 @@ class Addcontent extends StatelessWidget {
 static final  PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
-
+    bool newItem = true;
     return Scaffold(
       appBar: AppBar(
         title: ListenableBuilder(
@@ -21,33 +21,43 @@ static final  PageController _pageController = PageController();
             return Row(
               children: [
                 TextButton(onPressed: ()async{
+                  newItem = true;
                  await _pageController.animateToPage(0, duration:const Duration(milliseconds: 200), curve: Curves.bounceInOut);
                   
-                }, child: Container(
-                  padding:const EdgeInsets.all(3),
+                }, child: Column(
+                  children: [
+                    const Text("New Item",),
+                    Container(
+                      width: 65,
+                      height: 5,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border:Border.all(color:_pageController.page==0.0?  const Color.fromARGB(255, 108, 107, 107): Colors.transparent)
+                        borderRadius: BorderRadius.circular(8),
+                        color: newItem?Colors.blue:Colors.transparent
                       ),
-                  child:const Text("New Item",
-                 
-                 ),
+                    )
+                  ],
                 )),
                 TextButton(onPressed: ()async{
+                  newItem = false;
                  await _pageController.animateToPage(1, duration:const Duration(milliseconds: 200), curve: Curves.bounceInOut);
                  
                 }, child:  Column(
                   children: [
-                    Container(
-                      padding:const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color:_pageController.page==1.0? const Color.fromARGB(255, 108, 107, 107):Colors.transparent)
-                      ),
-                      child:const Text(
-                        "Restock",
-                        // style: TextStyle(decoration: _pageController.page==1?TextDecoration.underline:null),
-                        ),
+                    Column(
+                      children: [
+                        const Text(
+                          "Restock",
+                          // style: TextStyle(decoration: _pageController.page==1?TextDecoration.underline:null),
+                          ),
+                          Container(
+                            width: 55,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: !newItem?Colors.blue:Colors.transparent
+                            ),
+                          )
+                      ],
                     ),
                     
                   ],
