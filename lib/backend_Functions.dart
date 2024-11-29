@@ -133,13 +133,18 @@ Future<String>sendMessage(String messageHead,String messageBody,String assets)as
   String state = "";
   try {
     String messageId = Uuid().v1();
-    String assetname = assets.split("/").last;
+   
     messageModel message = messageModel(body: messageBody, title: messageHead);
     await firestore.collection("message").doc(messageId).set(message.toJyson());
-    await storage.child("/messages/$messageId/$assetname").putFile(File(assets));
+    if (assets.isNotEmpty) {
+       String assetname = assets.split("/").last;
+       await storage.child("/messages/$messageId/$assetname").putFile(File(assets));
+    }
+    state = "Success";
   } catch (e) {
     throw e.toString();
   }
+  print(state);
   return state;
 }
 Future<Map<String,dynamic>> getOrders()async{

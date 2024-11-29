@@ -13,24 +13,25 @@ const admin = require("firebase-admin");
 const functions = require("firebase-functions");
 admin.initializeApp();
 
-exports.newOrder = functions.firestore.onDocumentCreated("orders/{orderNumber}",
-    (snapshot) => {
-      const orderData = snapshot.data;
-      const head = orderData.data().title;
-      const body_ = orderData.data().body;
-      const message = {
-        notification: {
-          title: head,
-          body: body_,
-        },
-        topic: "all",
-      };
-      admin.messaging().send(message).then((response)=>{
-        console.log("Successfully sent notification", response);
-      }).catch((error)=>{
-        console.log("error sending message", error);
-      });
-    });
+exports.pushNotification = functions.firestore.
+    onDocumentCreated("message/{messageId}",
+        (snapshot) => {
+          const orderData = snapshot.data;
+          const head = orderData.data().title;
+          const body_ = orderData.data().body;
+          const message = {
+            notification: {
+              title: head,
+              body: body_,
+            },
+            topic: "all",
+          };
+          admin.messaging().send(message).then((response)=>{
+            console.log("Successfully sent notification", response);
+          }).catch((error)=>{
+            console.log("error sending message", error);
+          });
+        });
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 

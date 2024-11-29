@@ -57,53 +57,51 @@ class _OrderspageState extends State<Orderspage> {
                               context: context, 
                               builder: (context){
                                 return Dialog(
-                                  child: Container(
+                                  child: SizedBox(
                                     height: lipiaResponse.isEmpty?200:300,
-                                    child: Expanded(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Text("Owner:  $name"),
-                                          const SizedBox(height: 10,),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Text(contact),
-                                              IconButton(onPressed: ()async{
-                                                if (snapshotD.data!.containsKey("number")) {
-                                                  final Uri _phoneUri = Uri(
-                                                    scheme: "tel",
-                                                    path: contact
-                                                );
-                                                await launchUrl(_phoneUri);
-                                                } else {
-                                                  final Uri _email = Uri(
-                                                    scheme: "mailto",
-                                                    path: contact,
-                                                  );
-                                                  await launchUrl(_email);
-                                                }
-                                                
-                                              }, icon:const Icon(Icons.call))
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text("Order number:  $orderNum"),
-                                          ),
-                                          ListView.builder(
-                                            itemCount: lipiaResponse.length,
-                                            shrinkWrap: true,
-                                            itemBuilder: (BuildContext context, int index) {
-                                              List keys = lipiaResponse.keys.toList();
-                                              return Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text("${keys[index]}:  ${lipiaResponse[keys[index]]}"),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text("Owner:  $name"),
+                                        const SizedBox(height: 10,),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text(contact),
+                                            IconButton(onPressed: ()async{
+                                              if (snapshotD.data!.containsKey("number")) {
+                                                final Uri _phoneUri = Uri(
+                                                  scheme: "tel",
+                                                  path: contact
                                               );
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                              await launchUrl(_phoneUri);
+                                              } else {
+                                                final Uri _email = Uri(
+                                                  scheme: "mailto",
+                                                  path: contact,
+                                                );
+                                                await launchUrl(_email);
+                                              }
+                                              
+                                            }, icon:const Icon(Icons.call))
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text("Order number:  $orderNum"),
+                                        ),
+                                        ListView.builder(
+                                          itemCount: lipiaResponse.length,
+                                          shrinkWrap: true,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            List keys = lipiaResponse.keys.toList();
+                                            return Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text("${keys[index]}:  ${lipiaResponse[keys[index]]}"),
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );

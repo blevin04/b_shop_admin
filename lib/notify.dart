@@ -103,31 +103,37 @@ static TextEditingController bodycontroller = TextEditingController();
                 child: TextButton(onPressed: ()async{
                   showDialog(context: context, builder: (context){
                     return Dialog(
-                      child: Column(
-                        children: [
-                          const Icon(Icons.emergency_rounded),
-                          const Text("Confirm?"),
-                          Row(children: [
-                            TextButton(onPressed: ()async{
-                              String state = "";
-                              while (state.isEmpty) {
-                                showcircleprogress(context);
-                                state = await sendMessage(
-                                  titlecontroller.text, 
-                                  bodycontroller.text,
-                                   assetPath);
-                              }
-                              Navigator.pop(context);
-                              if (state == "Success") {
-                                showsnackbar(context, "Notification Sent");
+                      child: Container(
+                        height: 150,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Icon(Icons.notifications),
+                            const Text("Confirm?"),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                              TextButton(onPressed: ()async{
+                                String state = "";
+                                while (state.isEmpty) {
+                                  showcircleprogress(context);
+                                  state = await sendMessage(
+                                    titlecontroller.text, 
+                                    bodycontroller.text,
+                                     assetPath);
+                                }
                                 Navigator.pop(context);
-                              }
-                            }, child:const Text("Publish")),
-                            TextButton(onPressed: (){
-                              Navigator.pop(context);
-                            }, child:const Text("Cancel"))
-                          ],)
-                        ],
+                                if (state == "Success") {
+                                  showsnackbar(context, "Notification Sent");
+                                  Navigator.pop(context);
+                                }
+                              }, child:const Text("Publish")),
+                              TextButton(onPressed: (){
+                                Navigator.pop(context);
+                              }, child:const Text("Cancel"))
+                            ],)
+                          ],
+                        ),
                       ),
                     );
                   });
