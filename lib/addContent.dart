@@ -13,19 +13,24 @@ static final  PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
     bool newItem = true;
-    _pageController.addListener((){
-      if (_pageController.page == 0) {
-        newItem == true;
-      }else{
-        newItem == false;
-      }
-    });
+    // _pageController.addListener((){
+    //   print("nu");
+    //   print(_pageController.page);
+    //   if (_pageController.page == 0) {
+    //     newItem == true;
+    //   }else{
+    //     newItem == false;
+    //   }
+    // });
     
     return Scaffold(
       appBar: AppBar(
         title: ListenableBuilder(
           listenable: _pageController,
           builder: (BuildContext context, child) {
+            if (_pageController.page == 0) {
+              newItem = true;
+            }else{newItem = false;}
             return Row(
               children: [
                 TextButton(onPressed: ()async{

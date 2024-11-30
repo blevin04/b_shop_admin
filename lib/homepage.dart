@@ -2,6 +2,7 @@ import 'package:b_shop_admin/addContent.dart';
 import 'package:b_shop_admin/main.dart';
 import 'package:b_shop_admin/notify.dart';
 import 'package:b_shop_admin/ordersPage.dart';
+import 'package:b_shop_admin/stats.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -79,9 +80,19 @@ class _HomepageState extends State<Homepage> {
           if (currentPage.value ==2) {
             return const Notify();
           }
+          if (currentPage.value == 3) {
+            return const Stats();
+          }
           return Container();
         }
       ),
+      floatingActionButton: IconButton(
+        onPressed: (){
+            // Navigator.push(context, (MaterialPageRoute(builder: (context)=>const Stats())));
+            setState(() {
+              currentPage.value = 3;
+            });
+      }, icon:const Icon(FontAwesomeIcons.chartSimple,color: Colors.blue,)),
       bottomNavigationBar: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [

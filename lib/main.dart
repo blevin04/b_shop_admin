@@ -1,5 +1,6 @@
 import 'package:b_shop_admin/firebase_options.dart';
 import 'package:b_shop_admin/homepage.dart';
+import 'package:b_shop_admin/salespage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -72,6 +73,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      
       home: const Homepage(),
     );
   }
