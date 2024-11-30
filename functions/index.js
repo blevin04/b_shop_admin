@@ -47,13 +47,20 @@ exports.newOrder = functions.firestore.onDocumentCreated(
         const Orderitems = orderd.data().items;
         const ondelivery = orderd.data().OndeliveryPayment;
         const paymentMode = ondelivery?"On delivery payment":"Payment Complete";
+        const itemMap = new Map();
+        let body0 = "";
+        for (const [key, value] of Object.entries(Orderitems)) {
+          itemMap.set(key.toString(), value.toString());
+          body0 += `${value[2]}X ${value[0]} `;
+        }
+        body0 += paymentMode;
         const message = {
           notification: {
             title: "New Order",
-            body: paymentMode,
+            body: body0,
           },
           topic: "admin",
-          data: Orderitems,
+          data: itemMap,
         };
         admin.messaging().send(message).then((response) => {
           console.log("Successfully sent notification", response);

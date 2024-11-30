@@ -12,7 +12,7 @@ class Addcontent extends StatelessWidget {
 static final  PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
-    bool newItem = true;
+    bool newItem = false;
     // _pageController.addListener((){
     //   print("nu");
     //   print(_pageController.page);
@@ -30,7 +30,9 @@ static final  PageController _pageController = PageController();
           builder: (BuildContext context, child) {
             if (_pageController.page == 0) {
               newItem = true;
-            }else{newItem = false;}
+            }else{
+              newItem = false;
+              }
             return Row(
               children: [
                 TextButton(onPressed: ()async{
