@@ -13,6 +13,14 @@ static final  PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
     bool newItem = true;
+    _pageController.addListener((){
+      if (_pageController.page == 0) {
+        newItem == true;
+      }else{
+        newItem == false;
+      }
+    });
+    
     return Scaffold(
       appBar: AppBar(
         title: ListenableBuilder(

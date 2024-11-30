@@ -91,6 +91,7 @@ class _HomepageState extends State<Homepage> {
             });
           }, icon:Icon(
             FontAwesomeIcons.truckFast,
+            size: 30,
             color:currentPage.value == 0? Colors.amber:null,
             )),
           IconButton(onPressed: (){
@@ -98,7 +99,8 @@ class _HomepageState extends State<Homepage> {
               currentPage.value =1;
             });
           }, icon: Icon(
-            Icons.add,
+            Icons.add_box,
+            size: 30,
             color: currentPage.value == 1?
               Colors.amber:null,
             )),
@@ -108,6 +110,7 @@ class _HomepageState extends State<Homepage> {
             });
           }, icon:  Icon(
             Icons.notification_add,
+            size: 30,
             color:currentPage.value ==2?  Colors.amber:null,
             ))
         ],),

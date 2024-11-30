@@ -25,9 +25,13 @@ exports.pushNotification = functions.firestore.
               body: body_,
             },
             topic: "all",
+            data: {
+              noteid: snapshot.params.messageId,
+            },
           };
           admin.messaging().send(message).then((response)=>{
             console.log("Successfully sent notification", response);
+            console.log(message);
           }).catch((error)=>{
             console.log("error sending message", error);
           });

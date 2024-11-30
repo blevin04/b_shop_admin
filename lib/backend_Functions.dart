@@ -176,5 +176,15 @@ Future<Map<String,dynamic>> getUserInfo(String userId)async{
 }
 Future<void>delivered(String orderNum)async{
   await firestore.collection("orders").doc(orderNum).update({"delivered":true,});
-
+  // await firestore.collection("orders").doc(orderNum).get().then((onValue)async{
+  //   Map items = onValue.data()!["items"];
+  //   items.forEach((key,value)async{
+  //     await firestore.collection("Products").doc(key).get().then((onValue)async{
+  //       int stock = onValue.data()!["Stock"];
+  //       int bought =value.last;
+  //       stock-=bought;
+  //       await firestore.collection("Products").doc(key).update({"Stock":stock});
+  //     });
+  //   });
+  // });
 }
