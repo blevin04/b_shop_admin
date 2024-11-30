@@ -36,6 +36,34 @@ exports.pushNotification = functions.firestore.
             console.log("error sending message", error);
           });
         });
+
+
+exports.newOrder = functions.firestore.onDocumentCreated(
+    "orders/{orderNum}",
+    async (snapshot) => {
+      const orderd = snapshot.data;
+      const liveStatus = orderd.data().Live;
+      if (liveStatus == true) {
+        const Orderitems = orderd.data().items;
+        const ondelivery = orderd.data().OndeliveryPayment;
+        const paymentMode = ondelivery?"On delivery payment":"Payment Complete";
+        const message = {
+          notification: {
+            title: "New Order",
+            body: paymentMode,
+          },
+          topic: "admin",
+          data: Orderitems,
+        };
+        admin.messaging().send(message).then((response) => {
+          console.log("Successfully sent notification", response);
+          console.log(message);
+        }).catch((error)=>{
+          console.log("Error occured ", error);
+        });
+      }
+    },
+);
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
