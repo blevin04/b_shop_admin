@@ -1,6 +1,4 @@
-
 import 'dart:io';
-
 import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/homepage.dart';
 import 'package:b_shop_admin/utils.dart';
@@ -12,7 +10,7 @@ class Addcontent extends StatelessWidget {
 static final  PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
-    bool newItem = false;
+    bool newItem = true;
     // _pageController.addListener((){
     //   print("nu");
     //   print(_pageController.page);
@@ -28,10 +26,11 @@ static final  PageController _pageController = PageController();
         title: ListenableBuilder(
           listenable: _pageController,
           builder: (BuildContext context, child) {
-            if (_pageController.page == 0) {
-              newItem = true;
-            }else{
+            // print(newItem);
+            if (_pageController.page == 1) {
               newItem = false;
+            }else{
+              newItem = true;
               }
             return Row(
               children: [
@@ -150,7 +149,7 @@ class _addState extends State<add> {
               hintText: "Product Name",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide:const BorderSide(color: const Color.fromARGB(255, 106, 105, 105))
+                borderSide:const BorderSide(color:  Color.fromARGB(255, 106, 105, 105))
               )
             ),
           ),
@@ -174,7 +173,7 @@ class _addState extends State<add> {
               child: InkWell(
                 onTap: ()async{
                   imagePath += await getImage(context);
-                  if (imagePath == "Error") {
+                  if (imagePath.isEmpty) {
                     showsnackbar(context, "Error occured");
                   }else{
                     imageState((){});
@@ -394,7 +393,7 @@ class _restockState extends State<restock> {
             filtered.forEach((key,value1){
               //String t1="";
               if (!value1["Name"].toLowerCase().contains(value)) {
-                print("contains");
+                // print("contains");
                 toRemove.add(key);
               }
             });
@@ -453,7 +452,7 @@ class _restockState extends State<restock> {
                       showDialog(context: context, builder: (context){
                         int newStock = stock.ceil();
                         return Dialog(
-                          child: Container(
+                          child: SizedBox(
                             height: 120,
                             width: 150,
                             child: Column(

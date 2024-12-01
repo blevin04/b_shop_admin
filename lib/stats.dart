@@ -1,7 +1,5 @@
 import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/homepage.dart';
-import 'package:b_shop_admin/inventory.dart';
-import 'package:b_shop_admin/salespage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -78,71 +76,68 @@ class Stats extends StatelessWidget {
                                 shipped++;
                               }
                             }
-                            return Container(
-                              
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                   children: [
+                                     const Center(child: Text("Orders",style: TextStyle(fontSize: 18),),),
+                                     TextButton(onPressed: (){
+                                      showDialog(context: context, builder: (context){
+                                        return Dialog(
+                                          child: SizedBox(
+                                            height: 200,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                TextButton(onPressed: (){
+                                                  orderFrom = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
+                                                  orderState((){});
+                                                  Navigator.pop(context);
+                                                }, child:const Text("Today")),
+                                                TextButton(onPressed: (){
+                                                  orderFrom = DateTime(DateTime.now().year,DateTime.now().month);
+                                                  orderState((){});
+                                                  Navigator.pop(context);
+                                                }, child:const Text("This Month")),
+                                                TextButton(onPressed: (){
+                                                  int month = DateTime.now().month;
+                                                  month-=3;
+                                                  if (month<1) {
+                                                    month +=13;
+                                                  }
+                                                  orderFrom = DateTime(DateTime.now().year,month);
+                                                }, child:const Text("3 Months"))
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                     }, child:const Text("Today +"))
+                                   ],
+                                 ),
                                    Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                     children: [
-                                       const Center(child: Text("Orders"),),
-                                       TextButton(onPressed: (){
-                                        showDialog(context: context, builder: (context){
-                                          return Dialog(
-                                            child: Container(
-                                              height: 200,
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                children: [
-                                                  TextButton(onPressed: (){
-                                                    orderFrom = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
-                                                    orderState((){});
-                                                    Navigator.pop(context);
-                                                  }, child:const Text("Today")),
-                                                  TextButton(onPressed: (){
-                                                    orderFrom = DateTime(DateTime.now().year,DateTime.now().month);
-                                                    orderState((){});
-                                                    Navigator.pop(context);
-                                                  }, child:const Text("This Month")),
-                                                  TextButton(onPressed: (){
-                                                    int month = DateTime.now().month;
-                                                    month-=3;
-                                                    if (month<1) {
-                                                      month +=13;
-                                                    }
-                                                    orderFrom = DateTime(DateTime.now().year,month);
-                                                  }, child:const Text("3 Months"))
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        });
-                                       }, child:const Text("Today +"))
-                                     ],
-                                   ),
-                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        const Text("Total:"),
-                                        Text(total.toString(),style:const TextStyle(fontSize: 16),),
-                                      ],
-                                    ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
-                                     const Text("Pending: "),
-                                    Text("${total-shipped}"),
+                                      const Text("Total:"),
+                                      Text(total.toString(),style:const TextStyle(fontSize: 16),),
                                     ],
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: [
-                                    const Text("Shipped: "),
-                                    Text(shipped.toString()),
-                                  ],)
-                                ],
-                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                   const Text("Pending: "),
+                                  Text("${total-shipped}"),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                  const Text("Shipped: "),
+                                  Text(shipped.toString()),
+                                ],)
+                              ],
                             );
                           },
                         );
@@ -151,32 +146,6 @@ class Stats extends StatelessWidget {
                   );
                 }
                 return Card(
-                  child: InkWell(
-                    onTap: (){
-                      Navigator.push(context, (MaterialPageRoute(builder: (context)=>const Salespage())));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("Best \n Selling",style: TextStyle(fontSize: 25,color: Colors.blue,fontWeight: FontWeight.bold),),
-                        Text("and"),
-                        Text("Sales Stats",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),)
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 20,),
-            GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-              ),
-              itemCount: 2,
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, int index) {
-                if (index == 0) {
-                  return Card(
                     child: StreamBuilder(
                       stream: firestore.collection("Products").orderBy("Stock",descending: false).snapshots(),
                       
@@ -223,11 +192,11 @@ class Stats extends StatelessWidget {
                           },
                           child: Column(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
+                              const Padding(
+                                padding: EdgeInsets.all(5.0),
                                 child: Text("Low Stock Items",style: TextStyle(fontSize: 17),),
                               ),
-                              Divider(),
+                              const Divider(),
                               ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: snapshot.data.docs.length,
@@ -250,37 +219,21 @@ class Stats extends StatelessWidget {
                       },
                     ),
                   );
-                }
-                return Card(
-                  child: InkWell(
-                    onTap: (){
-                      Navigator.push(context, (MaterialPageRoute(builder: (context)=>const Inventory())));
-                    },
-                    child:const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text("Full inventory",style: TextStyle(fontSize: 20),),
-                          Text("View and edit all products in shop")
-                        ],
-                      ),
-                    ),
-                  ),
-                );
               },
             ),
-            // Card(
-            //   child: Container(
-            //     alignment: Alignment.topRight,
-            //     padding:const EdgeInsets.all(10),
-            //     width: MediaQuery.of(context).size.width-10,
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(12)
-            //     ),
-            //     child:const Text("View Full inventory ->",style: TextStyle(fontSize: 16),),
-            //   ),
-            // )
+            const SizedBox(height: 20,),
+            Card(
+              child: Container(
+                height: 50,
+                alignment: Alignment.centerRight,
+                padding:const EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width-10,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12)
+                ),
+                child:const Text("View Full inventory ->",style: TextStyle(fontSize: 16),),
+              ),
+            )
           ],
         ),
       ) ,
