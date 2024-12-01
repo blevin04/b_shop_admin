@@ -12,18 +12,39 @@
 const admin = require("firebase-admin");
 const functions = require("firebase-functions");
 admin.initializeApp();
-
 exports.pushNotification = functions.firestore.
     onDocumentCreated("message/{messageId}",
-        (snapshot) => {
+        async (snapshot) => {
           const orderData = snapshot.data;
           const head = orderData.data().title;
           const body_ = orderData.data().body;
+          const bucket = admin.storage().bucket();
+          // const messageId = snapshot.params.messageId;
+          const folderPath =
+          `/messages/0275c730-afd6-11ef-a994-614d16ba7b67/
+          JPEG_20241201_141833_4919703518714523812.jpg`;
+          const files = await bucket.file(folderPath);
+          const url = await files.getSignedUrl({
+            action: "read",
+            expires: "03-01-2500", // Specify your expiration date
+          });
+          const decodedUrl = decodeURIComponent(url[0]);
+          console.log(typeof decodedUrl, decodedUrl);
+          // if (files.length > 0) {
+          //   const file = files[0];
+          //   // Assuming there is only one image in the folder
+          //   const [url] = await file.getDownloadURL;
+          //   console.log("Url is ", url);
+          // }
           const message = {
             notification: {
               title: head,
               body: body_,
             },
+            android: {
+              notification: {
+                image: decodedUrl,
+              }},
             topic: "all",
             data: {
               noteid: snapshot.params.messageId,

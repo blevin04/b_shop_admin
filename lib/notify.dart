@@ -12,7 +12,7 @@ static TextEditingController bodycontroller = TextEditingController();
   Widget build(BuildContext context) {
     String assetPath = "";
     return Scaffold(
-      appBar: AppBar(),
+      // appBar: AppBar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -83,7 +83,7 @@ static TextEditingController bodycontroller = TextEditingController();
                 message: "A notification will be sent to this phone to see how it will look like once published",
                 child: TextButton(onPressed: ()async{
                   if (titlecontroller.text.isNotEmpty && bodycontroller.text.isNotEmpty) {
-                    print("Deams");
+                    // print("Deams");
                     await showNotification(titlecontroller.text, bodycontroller.text, assetPath);
                   }
                 }, 
@@ -125,6 +125,9 @@ static TextEditingController bodycontroller = TextEditingController();
                                 Navigator.pop(context);
                                 if (state == "Success") {
                                   showsnackbar(context, "Notification Sent");
+                                  titlecontroller.clear();
+                                  bodycontroller.clear();
+                                  assetPath = "";
                                   Navigator.pop(context);
                                 }
                               }, child:const Text("Publish")),

@@ -135,11 +135,12 @@ Future<String>sendMessage(String messageHead,String messageBody,String assets)as
     String messageId = Uuid().v1();
    
     messageModel message = messageModel(body: messageBody, title: messageHead);
-    await firestore.collection("message").doc(messageId).set(message.toJyson());
     if (assets.isNotEmpty) {
        String assetname = assets.split("/").last;
        await storage.child("/messages/$messageId/$assetname").putFile(File(assets));
+       await Future.delayed(const Duration(milliseconds:250 ));
     }
+    await firestore.collection("message").doc(messageId).set(message.toJyson());
     state = "Success";
   } catch (e) {
     throw e.toString();

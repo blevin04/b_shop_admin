@@ -1,5 +1,7 @@
 import 'package:b_shop_admin/firebase_options.dart';
 import 'package:b_shop_admin/homepage.dart';
+import 'package:b_shop_admin/loginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +76,17 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       
-      home: const Homepage(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.userChanges(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return Homepage();
+          }
+          else{
+            return Loginpage();
+          }
+        },
+      ),
     );
   }
 }
