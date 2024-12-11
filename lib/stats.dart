@@ -32,6 +32,7 @@ class Stats extends StatelessWidget {
                         return StreamBuilder(
                           stream: firestore.collection("orders").where("time",isGreaterThan: Timestamp.fromDate(orderFrom)).snapshots(),
                           
+                          
                           builder: (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return ListView.builder(
