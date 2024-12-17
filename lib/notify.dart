@@ -4,10 +4,16 @@ import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/utils.dart';
 import 'package:flutter/material.dart';
 
-class Notify extends StatelessWidget {
+class Notify extends StatefulWidget {
   const Notify({super.key});
 static TextEditingController titlecontroller = TextEditingController();
 static TextEditingController bodycontroller = TextEditingController();
+
+  @override
+  State<Notify> createState() => _NotifyState();
+}
+
+class _NotifyState extends State<Notify> {
   @override
   Widget build(BuildContext context) {
     String assetPath = "";
@@ -19,7 +25,7 @@ static TextEditingController bodycontroller = TextEditingController();
             const Text("Create a notification for your customers"),
             const SizedBox(height: 20,),
             TextField(
-              controller: titlecontroller,
+              controller: Notify.titlecontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -31,7 +37,7 @@ static TextEditingController bodycontroller = TextEditingController();
             ),
             const SizedBox(height: 20,),
             TextField(
-              controller: bodycontroller,
+              controller: Notify.bodycontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -42,9 +48,9 @@ static TextEditingController bodycontroller = TextEditingController();
             ),
             const SizedBox(height: 20,),
             StatefulBuilder(
-              builder: (BuildContext context, setState) {
+              builder: (BuildContext context, setStateImage) {
                 return Container(
-                  padding:const EdgeInsets.all(10),
+                  
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
@@ -58,14 +64,18 @@ static TextEditingController bodycontroller = TextEditingController();
                         borderRadius: BorderRadius.circular(10),
                         onTap: ()async{
                           assetPath = await getsingleImage(context);
-                          setState((){});
+                          setStateImage((){});
                         },
-                        child:const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.image),
-                            Text("Attatch an image")
-                          ],
+                        child:const Padding(
+
+                          padding:  EdgeInsets.all(10.0),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image),
+                              Text("Attatch an image")
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -82,9 +92,9 @@ static TextEditingController bodycontroller = TextEditingController();
                 triggerMode: TooltipTriggerMode.tap,
                 message: "A notification will be sent to this phone to see how it will look like once published",
                 child: TextButton(onPressed: ()async{
-                  if (titlecontroller.text.isNotEmpty && bodycontroller.text.isNotEmpty) {
+                  if (Notify.titlecontroller.text.isNotEmpty && Notify.bodycontroller.text.isNotEmpty) {
                     // print("Deams");
-                    await showNotification(titlecontroller.text, bodycontroller.text, assetPath);
+                    await showNotification(Notify.titlecontroller.text, Notify.bodycontroller.text, assetPath);
                   }
                 }, 
                 child: Container(
@@ -118,17 +128,18 @@ static TextEditingController bodycontroller = TextEditingController();
                                 while (state.isEmpty) {
                                   showcircleprogress(context);
                                   state = await sendMessage(
-                                    titlecontroller.text, 
-                                    bodycontroller.text,
+                                    Notify.titlecontroller.text, 
+                                    Notify.bodycontroller.text,
                                      assetPath);
                                 }
                                 Navigator.pop(context);
                                 if (state == "Success") {
                                   showsnackbar(context, "Notification Sent");
-                                  titlecontroller.clear();
-                                  bodycontroller.clear();
+                                  Notify.titlecontroller.clear();
+                                  Notify.bodycontroller.clear();
                                   assetPath = "";
                                   Navigator.pop(context);
+                                  setState(() {});
                                 }
                               }, child:const Text("Publish")),
                               TextButton(onPressed: (){

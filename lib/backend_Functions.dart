@@ -137,7 +137,7 @@ Future<String>sendMessage(String messageHead,String messageBody,String assets)as
     messageModel message = messageModel(body: messageBody, title: messageHead);
     if (assets.isNotEmpty) {
        String assetname = assets.split("/").last;
-       await storage.child("/messages/$messageId/$assetname").putFile(File(assets));
+       await storage.child("/messages/$messageId/image").putFile(File(assets));
        await Future.delayed(const Duration(milliseconds:250 ));
     }
     await firestore.collection("message").doc(messageId).set(message.toJyson());

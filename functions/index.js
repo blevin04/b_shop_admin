@@ -20,10 +20,10 @@ exports.pushNotification = functions.firestore.
           const body_ = orderData.data().body;
           const bucket = admin.storage().bucket();
           // const messageId = snapshot.params.messageId;
+          const assetName = snapshot.params.messageId;
           const folderPath =
-          `/messages/0275c730-afd6-11ef-a994-614d16ba7b67/
-          JPEG_20241201_141833_4919703518714523812.jpg`;
-          const files = await bucket.file(folderPath);
+          "messages/";
+          const files = await bucket.file(folderPath+assetName+"/image");
           const url = await files.getSignedUrl({
             action: "read",
             expires: "03-01-2500", // Specify your expiration date

@@ -6,7 +6,7 @@ class Stats extends StatelessWidget {
   const Stats({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     DateTime orderFrom = DateTime(DateTime.now()
     .year,DateTime.now().month,DateTime.now().day);
     return Scaffold(
