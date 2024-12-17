@@ -33,7 +33,6 @@ class _NotifyState extends State<Notify> {
                 ),
                 hintText: "Notification title",
               ),
-              
             ),
             const SizedBox(height: 20,),
             TextField(
@@ -50,7 +49,6 @@ class _NotifyState extends State<Notify> {
             StatefulBuilder(
               builder: (BuildContext context, setStateImage) {
                 return Container(
-                  
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
@@ -67,7 +65,6 @@ class _NotifyState extends State<Notify> {
                           setStateImage((){});
                         },
                         child:const Padding(
-
                           padding:  EdgeInsets.all(10.0),
                           child:  Row(
                             mainAxisAlignment: MainAxisAlignment.center,
