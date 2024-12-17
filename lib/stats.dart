@@ -2,13 +2,13 @@ import 'package:b_shop_admin/backend_Functions.dart';
 import 'package:b_shop_admin/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 class Stats extends StatelessWidget {
   const Stats({super.key});
 
   @override
   Widget build(BuildContext context) {
-    DateTime orderFrom = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
+    DateTime orderFrom = DateTime(DateTime.now()
+    .year,DateTime.now().month,DateTime.now().day);
     return Scaffold(
       appBar: AppBar(
         // leading: IconButton(onPressed: (){}, icon: Icon(Icons.)),
@@ -31,8 +31,6 @@ class Stats extends StatelessWidget {
                       builder: (context,orderState) {
                         return StreamBuilder(
                           stream: firestore.collection("orders").where("time",isGreaterThan: Timestamp.fromDate(orderFrom)).snapshots(),
-                          
-                          
                           builder: (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return ListView.builder(
@@ -115,7 +113,14 @@ class Stats extends StatelessWidget {
                                           ),
                                         );
                                       });
-                                     }, child:const Text("Today +"))
+                                     }, child:orderFrom == DateTime(DateTime.now().year,DateTime.now().month)?
+                                                 const Text("Month +"):
+                                                 orderFrom == DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day)?
+                                                 const Text("Today"):
+                                                 const Text("3 Month")
+                                                 
+                                                 )
+                                                 
                                    ],
                                  ),
                                    Row(

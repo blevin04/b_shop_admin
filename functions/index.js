@@ -28,8 +28,8 @@ exports.pushNotification = functions.firestore.
             action: "read",
             expires: "03-01-2500", // Specify your expiration date
           });
-          const decodedUrl = decodeURIComponent(url[0]);
-          console.log(typeof decodedUrl, decodedUrl);
+          const decodedUrl = url[0];
+          console.log(decodedUrl);
           // if (files.length > 0) {
           //   const file = files[0];
           //   // Assuming there is only one image in the folder
@@ -57,8 +57,6 @@ exports.pushNotification = functions.firestore.
             console.log("error sending message", error);
           });
         });
-
-
 exports.newOrder = functions.firestore.onDocumentCreated(
     "orders/{orderNum}",
     async (snapshot) => {
