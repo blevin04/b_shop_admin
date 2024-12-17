@@ -346,7 +346,7 @@ class _addState extends State<add> {
                showsnackbar(context, "${nameController.text} added successfully");
                imagePath.clear();
                currentCategory ="Select Category";
-               Navigator.pop(context);
+              //  Navigator.pop(context);
                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Homepage()));
              }
           }, 

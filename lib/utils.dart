@@ -109,7 +109,6 @@ try {
       showsnackbar(context, error.toString());
     }
 }
-
 Future<void> showNotification(String title,String body,String imagePath)async{
   try{
 
