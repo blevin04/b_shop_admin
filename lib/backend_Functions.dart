@@ -100,7 +100,7 @@ Future<List<dynamic>> getProductPictures(String category,String productId)async{
   });
   Hive.box("Images").put(productId, pictures);
   }
-  print(pictures.length);
+  // print(pictures.length);
   return pictures;
 }
 Future<List<String>> getcategories()async{
@@ -136,7 +136,7 @@ Future<String>sendMessage(String messageHead,String messageBody,String assets)as
    
     messageModel message = messageModel(body: messageBody, title: messageHead);
     if (assets.isNotEmpty) {
-       String assetname = assets.split("/").last;
+      //  String assetname = assets.split("/").last;
        await storage.child("/messages/$messageId/image").putFile(File(assets));
        await Future.delayed(const Duration(milliseconds:250 ));
     }
@@ -145,7 +145,7 @@ Future<String>sendMessage(String messageHead,String messageBody,String assets)as
   } catch (e) {
     throw e.toString();
   }
-  print(state);
+  // print(state);
   return state;
 }
 Future<Map<String,dynamic>> getOrders()async{

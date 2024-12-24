@@ -153,7 +153,7 @@ class Stats extends StatelessWidget {
                 }
                 return Card(
                     child: StreamBuilder(
-                      stream: firestore.collection("Products").orderBy("Stock",descending: false).snapshots(),
+                      stream: firestore.collection("Products").orderBy("Stock",descending: false).limit(5).snapshots(),
                       
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -211,6 +211,7 @@ class Stats extends StatelessWidget {
                                   String productName = product["Name"];
                                   var instock = product["Stock"];
                                   return Row(
+                                    
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
                                       Text(productName),

@@ -436,7 +436,14 @@ class _restockState extends State<restock> {
                         }
                         //print(snapshot.data);
                         if (snapshot.data == null) {
-                          return const CircleAvatar(radius: 30,);
+                          // print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
+                          return const CircleAvatar();
+                        }
+                        if (snapshot.data.isEmpty) {
+                          return const CircleAvatar(
+                            radius: 30,
+                            
+                          );
                         }
                         return CircleAvatar(
                           radius: 30,
