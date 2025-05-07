@@ -90,6 +90,38 @@ exports.newOrder = functions.firestore.onDocumentCreated(
       }
     },
 );
+
+exports.httpsTest =functions.https.onRequest(async (req, res) => {
+  const name = req.body.name;
+  const number = req.body.number;
+  if (!name) {
+    return res.status(400).send("Missing 'name' ");
+  }
+  if (!number) {
+    return res.status(400).send("Missing 'number'");
+  }
+  console.log(typeof(name), typeof(number));
+  try {
+    const userRef = admin.firestore().collection("code_Sprint_Users").doc(name);
+    const doc = await userRef.get();
+    console.log(name);
+    if (doc.exists) {
+      const currentScore = doc.data().Score || 0;
+      await userRef.update({
+        Score: currentScore + number,
+      });
+    } else {
+      await userRef.set({
+        Score: number,
+      });
+    }
+    return res.status(200).send("Score updated");
+  } catch (error) {
+    console.error("Error occured", error);
+    return res.status(500).send("internal server error");
+  }
+},
+);
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 

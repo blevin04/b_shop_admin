@@ -404,123 +404,124 @@ class _restockState extends State<restock> {
             });
           },
         ),
-        FutureBuilder(
-          future: getStock(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center( child: CircularProgressIndicator(),);
-            }
-            if (snapshot.data.isEmpty) {
-              return const Center(child: Icon(Icons.error),);
-            }
-            if (filtered.isEmpty && searchController.text.isEmpty) {
-              filtered = snapshot.data;
-            }
-            return filtered.isEmpty&&searchController.text.isNotEmpty?const Center(child: Text("No Match"),):
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: filtered.length,
-              itemBuilder: (BuildContext context, int index) {
-                List keys = filtered.keys.toList();
-                String pName = filtered[keys[index]]["Name"];
-                int inStock = filtered[keys[index]]["Stock"];
-                String category = filtered[keys[index]]["Category"];
-                return Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: ListTile(
-                    leading: FutureBuilder(
-                      future: getProductPictures(category, keys[index]),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if(snapshot.connectionState == ConnectionState.waiting){
-                          return const CircleAvatar();
-                        }
-                        //print(snapshot.data);
-                        if (snapshot.data == null) {
-                          // print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
-                          return const CircleAvatar();
-                        }
-                        if (snapshot.data.isEmpty) {
-                          return const CircleAvatar(
+        SingleChildScrollView(
+          
+          child: FutureBuilder(
+            future: getStock(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center( child: CircularProgressIndicator(),);
+              }
+              if (snapshot.data.isEmpty) {
+                return const Center(child: Icon(Icons.error),);
+              }
+              if (filtered.isEmpty && searchController.text.isEmpty) {
+                filtered = snapshot.data;
+              }
+              return filtered.isEmpty&&searchController.text.isNotEmpty?const Center(child: Text("No Match"),):
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: filtered.length,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  List keys = filtered.keys.toList();
+                  String pName = filtered[keys[index]]["Name"];
+                  int inStock = filtered[keys[index]]["Stock"];
+                  String category = filtered[keys[index]]["Category"];
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: ListTile(
+                      leading: FutureBuilder(
+                        future: getProductPictures(category, keys[index]),
+                        builder: (BuildContext context, AsyncSnapshot snapshot) {
+                          if(snapshot.connectionState == ConnectionState.waiting){
+                            return const CircleAvatar();
+                          }
+                          //print(snapshot.data);
+                          if (snapshot.data == null) {
+                            return const CircleAvatar();
+                          }
+                          if (snapshot.data.isEmpty) {
+                            return const CircleAvatar(
+                              radius: 30,
+                            );
+                          }
+                          return CircleAvatar(
                             radius: 30,
-                            
+                            backgroundImage: MemoryImage(snapshot.data.first),
                           );
-                        }
-                        return CircleAvatar(
-                          radius: 30,
-                          backgroundImage: MemoryImage(snapshot.data.first),
-                        );
+                        },
+                      ),
+                      title: Text(pName),
+                      subtitle: Text(category),
+                      trailing: Text("$inStock Available",style:const TextStyle(fontSize: 14),),
+                      onTap: (){
+                        showDialog(context: context, builder: (context){
+                          int newStock = stock.ceil();
+                          return Dialog(
+                            child: SizedBox(
+                              height: 120,
+                              width: 150,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                 const Text("New Stock Number"),
+                                  InputQty(
+                                    initVal: stock.ceil(),
+                                    onQtyChanged: (value){
+                                      newStock = value.toInt();
+                                    },
+                                  ),
+                                  TextButton(onPressed: ()async{
+                                    String state ="";
+                                    while(state.isEmpty){
+                                      showcircleprogress(context);
+                                      state = await reStock(keys[index],newStock);
+                                    }
+                                    Navigator.pop(context);
+                                    if (state=="Success") {
+                                      showsnackbar(context, "Restocked $pName");
+                                      Navigator.pop(context);
+                                    }else{
+                                      showsnackbar(context, "An error Occurred Please try again");
+                                    }
+                                  }, child:const Text("Done"))
+                                ],
+                              ),
+                            ),
+                          );
+                        });
                       },
                     ),
-                    title: Text(pName),
-                    subtitle: Text(category),
-                    trailing: Text("$inStock Available",style:const TextStyle(fontSize: 14),),
-
-                    onTap: (){
-                      showDialog(context: context, builder: (context){
-                        int newStock = stock.ceil();
-                        return Dialog(
-                          child: SizedBox(
-                            height: 120,
-                            width: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                               const Text("New Stock Number"),
-                                InputQty(
-                                  initVal: stock.ceil(),
-                                  onQtyChanged: (value){
-                                    newStock = value.toInt();
-                                  },
-                                ),
-                                TextButton(onPressed: ()async{
-                                  String state ="";
-                                  while(state.isEmpty){
-                                    showcircleprogress(context);
-                                    state = await reStock(keys[index],newStock);
-                                  }
-                                  Navigator.pop(context);
-                                  if (state=="Success") {
-                                    showsnackbar(context, "Restocked $pName");
-                                    Navigator.pop(context);
-                                  }else{
-                                    showsnackbar(context, "An error Occurred Please try again");
-                                  }
-                                }, child:const Text("Done"))
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                  ),
-                );
-                // return SizedBox(
-                //   height: 200,
-                //   width: 200,
-                //   child: Row(
-                //     children: [
-                //       FutureBuilder(
-                //       future: getProductPictures(category, keys[index]),
-                //       builder: (BuildContext context, AsyncSnapshot snapshot) {
-                //         if (snapshot.connectionState == ConnectionState.waiting) {
-                //           return const CircleAvatar();
-                //         }
-                //         return Image(
-                //           // height: 200,
-                //           // width: 200,
-                //           fit: BoxFit.contain,
-                //           image: MemoryImage(snapshot.data.first));
-                //       },
-                //     ),
-                //     
-                //      
-                //      
-                //     ],
-                //   ),
-                // );
-              },
-            );
-          },
+                  );
+                  // return SizedBox(
+                  //   height: 200,
+                  //   width: 200,
+                  //   child: Row(
+                  //     children: [
+                  //       FutureBuilder(
+                  //       future: getProductPictures(category, keys[index]),
+                  //       builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  //         if (snapshot.connectionState == ConnectionState.waiting) {
+                  //           return const CircleAvatar();
+                  //         }
+                  //         return Image(
+                  //           // height: 200,
+                  //           // width: 200,
+                  //           fit: BoxFit.contain,
+                  //           image: MemoryImage(snapshot.data.first));
+                  //       },
+                  //     ),
+                  //     
+                  //      
+                  //      
+                  //     ],
+                  //   ),
+                  // );
+                },
+              );
+            },
+          ),
         ),
       ],
     );
